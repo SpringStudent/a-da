@@ -1,45 +1,38 @@
 package io.github.springstudent.ada.client.core;
 
-
 import io.github.springstudent.ada.client.RemoteClient;
-import io.github.springstudent.ada.common.log.Log;
 import org.bytedeco.javacv.CanvasFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.github.springstudent.ada.common.utils.ImageUtilities.getOrCreateIcon;
 import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_WINDOWS;
-import static java.lang.Math.abs;
-import static java.lang.String.format;
 
 /**
  * @author ZhouNing
  * @date 2024/12/9 8:42
  */
-public class RemoteScreen extends CanvasFrame {
+public class RemoteScreen extends JFrame {
 
-    private static final int OFFSET = 6;
+    private transient RemoteScreenListener listeners;
 
-    private transient RemoteScreenListener listener;
+    private int captureWidth;
 
-    private static final int DEFAULT_FACTOR = 1;
-    private double xFactor = DEFAULT_FACTOR;
-    private double yFactor = DEFAULT_FACTOR;
+    private int captureHeight;
+
+    private CanvasFrame canvasFrame;
 
     private Timer sessionTimer;
 
     private JToggleButton windowsKeyToggleButton;
 
     private JToggleButton ctrlKeyToggleButton;
-
-    private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
-
-    private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
 
@@ -49,9 +42,10 @@ public class RemoteScreen extends CanvasFrame {
 
     public RemoteScreen() {
         super("远程桌面");
-        this.setVisible(false);
-        this.listener = RemoteClient.getRemoteClient().getController();
+        this.listeners = RemoteClient.getRemoteClient().getController();
         initFrame();
+        initCanvasPanel();
+        //allows for seeing the TAB with a regular KEY listener ...
         setFocusTraversalKeysEnabled(false);
         initMenuBar();
         initListeners();
@@ -71,33 +65,14 @@ public class RemoteScreen extends CanvasFrame {
         });
     }
 
+    private void initCanvasPanel() {
+        this.canvasFrame = new CanvasFrame("ddd");
+        canvasFrame.setVisible(false);
+        this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
+    }
+
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        // 适配屏幕菜单项
-        JCheckBoxMenuItem fitToScreenItem = new JCheckBoxMenuItem(new AbstractAction("适配屏幕") {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                fitToScreenActivated.set(!fitToScreenActivated.get());
-                if (fitToScreenActivated.get()) {
-                    resetCanvas();
-                } else {
-                    resetFactors();
-                }
-                repaint();
-            }
-        });
-        // 保持宽高比菜单项
-        JCheckBoxMenuItem keepAspectRatioItem = new JCheckBoxMenuItem(new AbstractAction("保持宽高比") {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                keepAspectRatioActivated.set(!keepAspectRatioActivated.get());
-                resetCanvas();
-                repaint();
-            }
-        });
-        keepAspectRatioItem.setEnabled(false);
-        // 根据适配屏幕的状态动态控制保持宽高比的可见性
-        fitToScreenItem.addActionListener(e -> keepAspectRatioItem.setEnabled(fitToScreenActivated.get()));
         //发送win键
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         menuBar.add(windowsKeyToggleButton);
@@ -142,6 +117,7 @@ public class RemoteScreen extends CanvasFrame {
         return sendCtrlKey;
     }
 
+
     protected JToggleButton createToggleButton(Action action) {
         final JToggleButton button = new JToggleButton();
         addButtonProperties(action, button);
@@ -168,7 +144,6 @@ public class RemoteScreen extends CanvasFrame {
         addFocusListener();
         addKeyListeners();
         addMouseListeners();
-        addResizeListener();
         addMinMaximizedListener();
     }
 
@@ -191,7 +166,7 @@ public class RemoteScreen extends CanvasFrame {
     }
 
     private void addMouseListeners() {
-        this.addMouseListener(new MouseAdapter() {
+        canvasFrame.getCanvas().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
                 fireOnMousePressed(ev.getX(), ev.getY(), ev.getButton());
@@ -203,7 +178,7 @@ public class RemoteScreen extends CanvasFrame {
             }
         });
 
-        this.addMouseMotionListener(new MouseMotionListener() {
+        canvasFrame.getCanvas().addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent ev) {
                 fireOnMouseMove(ev.getX(), ev.getY());
@@ -215,13 +190,13 @@ public class RemoteScreen extends CanvasFrame {
             }
         });
 
-        this.addMouseWheelListener(ev -> {
+        canvasFrame.getCanvas().addMouseWheelListener(ev -> {
             fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
         });
     }
 
     private void addKeyListeners() {
-        addKeyListener(new KeyAdapter() {
+        canvasFrame.getCanvas().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent ev) {
                 fireOnKeyPressed(ev.getKeyCode(), ev.getKeyChar());
@@ -234,25 +209,20 @@ public class RemoteScreen extends CanvasFrame {
         });
     }
 
-    private void addResizeListener() {
-        addComponentListener(new ComponentAdapter() {
-            private Timer resizeTimer;
-
-            @Override
-            public void componentResized(ComponentEvent ev) {
-                if (resizeTimer != null) {
-                    resizeTimer.stop();
-                }
-                resizeTimer = new Timer(500, e -> resetCanvas());
-                resizeTimer.setRepeats(false);
-                resizeTimer.start();
-            }
-        });
-    }
-
     private void addMinMaximizedListener() {
         addWindowStateListener(event -> isImmutableWindowsSize.set((event.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED || (event.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
     }
+
+    public CanvasFrame getScreenPannel() {
+        return canvasFrame;
+    }
+
+    public void showImg(BufferedImage img) {
+        this.captureWidth = img.getWidth();
+        this.captureHeight = img.getHeight();
+        this.canvasFrame.showImage(img);
+    }
+
     public void launch() {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
@@ -273,80 +243,38 @@ public class RemoteScreen extends CanvasFrame {
         });
     }
 
-
-    public void computeScaleFactors(int sourceWidth, int sourceHeight, boolean keepAspectRatio) {
-        Log.debug(format("ComputeScaleFactors for w: %d h: %d", sourceWidth, sourceHeight));
-        canvas.setSize(canvas.getWidth() - OFFSET, canvas.getHeight() - OFFSET);
-        xFactor = canvas.getWidth() / sourceWidth;
-        yFactor = canvas.getHeight() / sourceHeight;
-        if (keepAspectRatio && abs(xFactor - yFactor) > 0.01) {
-            resizeWindow(sourceWidth, sourceHeight);
-        }
-    }
-
-    private void resizeWindow(int sourceWidth, int sourceHeight) {
-        Log.debug("%s", () -> format("Resize  W:H %d:%d x:y %f:%f", this.getWidth(), this.getHeight(), xFactor, yFactor));
-        int menuHeight = this.getHeight() - canvas.getHeight();
-        final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-        if (xFactor < yFactor) {
-            if ((sourceWidth * yFactor) + OFFSET < maximumWindowBounds.width) {
-                xFactor = yFactor;
-                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
-            } else {
-                yFactor = xFactor;
-                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
-            }
-        } else {
-            if ((sourceHeight * xFactor) + menuHeight + OFFSET < maximumWindowBounds.height) {
-                yFactor = xFactor;
-                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
-            } else {
-                xFactor = yFactor;
-                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
-            }
-        }
-        Log.debug("%s", () -> format("Resized W:H %d:%d x:y %f:%f", this.getWidth(), this.getHeight(), xFactor, yFactor));
-    }
-
-    private void resetFactors() {
-        xFactor = DEFAULT_FACTOR;
-        yFactor = DEFAULT_FACTOR;
-    }
-
-    void resetCanvas() {
-        canvas = null;
-    }
-
     private void fireOnMouseMove(int x, int y) {
-        listener.onMouseMove(scaleXPosition(x), scaleYPosition(y));
+        listeners.onMouseMove(scaleXPosition(x), scaleYPosition(y));
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
-        listener.onMousePressed(scaleXPosition(x), scaleYPosition(y), button);
+        listeners.onMousePressed(scaleXPosition(x), scaleYPosition(y), button);
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
-        listener.onMouseReleased(scaleXPosition(x), scaleYPosition(y), button);
+        listeners.onMouseReleased(scaleXPosition(x), scaleYPosition(y), button);
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
-        listener.onMouseWheeled(scaleXPosition(x), scaleYPosition(y), rotations);
+        listeners.onMouseWheeled(scaleXPosition(x), scaleYPosition(y), rotations);
     }
 
     private int scaleYPosition(int y) {
-        return (int) Math.round(y / yFactor);
+        int canvasHeight = canvasFrame.getCanvas().getHeight();
+        return (int) Math.round(y * (captureHeight / (double) canvasHeight));
     }
 
     private int scaleXPosition(int x) {
-        return (int) Math.round(x / xFactor);
+        int canvasWidth = canvasFrame.getCanvas().getWidth();
+        return (int) Math.round(x * (captureWidth / (double) canvasWidth));
     }
 
     private void fireOnKeyPressed(int keyCode, char keyChar) {
-        listener.onKeyPressed(keyCode, keyChar);
+        listeners.onKeyPressed(keyCode, keyChar);
     }
 
     private void fireOnKeyReleased(int keyCode, char keyChar) {
-        listener.onKeyReleased(keyCode, keyChar);
+        listeners.onKeyReleased(keyCode, keyChar);
     }
 
 }

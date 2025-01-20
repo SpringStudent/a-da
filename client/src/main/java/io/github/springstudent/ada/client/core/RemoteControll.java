@@ -20,7 +20,7 @@ import static java.lang.System.getProperty;
  **/
 public abstract class RemoteControll implements ClipboardOwner {
 
-    protected Channel channel;
+    private Channel channel;
 
     private String rootDir;
 
@@ -64,6 +64,7 @@ public abstract class RemoteControll implements ClipboardOwner {
     protected void showMessageDialog(Object msg, int messageType) {
         SwingUtilities.invokeLater(() -> RemoteClient.getRemoteClient().showMessageDialog(msg, messageType));
     }
+
     public abstract void handleCmd(Cmd cmd);
 
     public abstract String getType();

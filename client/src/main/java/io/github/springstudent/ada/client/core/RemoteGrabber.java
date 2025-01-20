@@ -10,7 +10,6 @@ import org.bytedeco.javacv.Frame;
  * @date 2025/01/18 14:30
  */
 public class RemoteGrabber {
-
     private FFmpegFrameGrabber grabber;
 
     private FFmpegFrameRecorder recorder;

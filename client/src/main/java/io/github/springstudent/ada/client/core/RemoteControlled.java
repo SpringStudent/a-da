@@ -10,6 +10,7 @@ import java.awt.event.InputEvent;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static java.awt.event.KeyEvent.*;
 
@@ -62,21 +63,22 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(true);
-                new Thread(()->{
+                CompletableFuture.runAsync(() -> {
                     try {
                         remoteGrabber.start();
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
                     }
-                }).start();
-                start();
+                }).whenComplete((unused, throwable) -> RemoteControlled.this.start());
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(false);
-                try {
-                    remoteGrabber.stop();
-                } catch (Exception e) {
-                }
-                stop();
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        remoteGrabber.stop();
+                    } catch (Exception e) {
+                    }
+                }).whenComplete((unused, throwable) -> {
+                    RemoteControlled.this.stop();
+                });
             }
         } else if (cmd.getType().equals(CmdType.KeyControl)) {
             this.handleMessage((CmdKeyControl) cmd);

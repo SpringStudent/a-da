@@ -23,10 +23,9 @@ import static java.lang.String.format;
  * @date 2024/12/9 8:39
  **/
 public class RemoteController extends RemoteControll implements RemoteScreenListener {
-
     private String deviceCode;
 
-    private RemoteDesktop remoteDesktop;
+    private RemoteSubscribe remoteSubscribe;
 
     public RemoteController() {
 
@@ -56,30 +55,31 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         if (cmd.getType().equals(CmdType.ResCapture)) {
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START) {
+
                 RemoteClient.getRemoteClient().getRemoteScreen().launch();
                 try {
-                    remoteDesktop = new RemoteDesktop(new URI("ws://172.16.1.72:11111/desktop?id=xxx"));
-                    remoteDesktop.connect();
+                    remoteSubscribe = new RemoteSubscribe(new URI("ws://172.16.1.72:11111/desktop?id=xxx"));
+                    remoteSubscribe.connect();
                 } catch (Exception e) {
                 }
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
-                if (remoteDesktop != null) {
-                    remoteDesktop.close();
+                if (remoteSubscribe != null) {
+                    remoteSubscribe.close();
                 }
                 stop();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_BYCONTROLLED) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 stop();
-                if (remoteDesktop != null) {
-                    remoteDesktop.close();
+                if (remoteSubscribe != null) {
+                    remoteSubscribe.close();
                 }
                 showMessageDialog("被控制端断开了连接", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_CHANNELINACTIVE) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 stop();
-                if (remoteDesktop != null) {
-                    remoteDesktop.close();
+                if (remoteSubscribe != null) {
+                    remoteSubscribe.close();
                 }
                 showMessageDialog("被控制端不在线", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.OFFLINE) {
