@@ -23,7 +23,7 @@ public class RemoteGrabber {
         grabber.setOption("framerate", "25");
         grabber.start();
         // 创建FFmpegFrameRecorder来推送流
-        recorder = new FFmpegFrameRecorder("http://172.16.1.72:11111/receive?id=xxx", grabber.getImageWidth(), grabber.getImageHeight());
+        recorder = new FFmpegFrameRecorder("http://172.16.1.37:11110/receive?id=xxx", grabber.getImageWidth(), grabber.getImageHeight());
         recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
         recorder.setFormat("mpegts");
         recorder.setFrameRate(30);

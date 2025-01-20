@@ -1,0 +1,92 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+<select id="clients" onchange="clientChange()">
+    <option id="-1">---选择远程桌面---</option>
+</select>
+<input type="button" value="获取桌面" hidden="true"/></br>
+<canvas id="screen"></canvas>
+<script type="text/javascript" src="js/jsmpeg.min.js"></script>
+<script type="text/javascript">
+    var player;
+    var canvas;
+    var ajaxObj = new XMLHttpRequest();
+    ajaxObj.open('GET', 'http://172.16.1.72:11111/clients');
+    ajaxObj.send();
+    ajaxObj.onreadystatechange = function () {
+        if (ajaxObj.readyState == 4 && ajaxObj.status == 200) {
+            var data = JSON.parse(ajaxObj.responseText);
+            var add = document.getElementById("clients");
+            add.innerHTML = "<option id=\"-1\">---请选择---</option>";
+            for (var i = 0; i < data.length; i++) {
+                var option = document.createElement("option");
+                option.id = data[i];
+                option.innerText = data[i];
+                add.append(option);
+            }
+        }
+    }
+
+    function clientChange() {
+        var client = document.getElementById("clients");
+        var id = client.options[client.selectedIndex].id;
+        canvas = document.getElementById('screen');
+        //注册事件
+        canvas.addEventListener("mousedown", doMouseDown, false);
+        canvas.addEventListener("mouseup", doMouseUp, false);
+        canvas.addEventListener("mousemove", doMouseMove, false);
+        canvas.addEventListener("mouseout", doMouseOut, false);
+
+        var url = 'ws://172.16.1.72:11111/desktop?id=' + id;
+        if (id != -1) {
+            player = new JSMpeg.Player(url, {canvas: canvas});
+        }
+        if (player != undefined) {
+            player.stop()
+        }
+    }
+
+    //鼠标按下响应事件
+    function doMouseDown(event) {
+        var x = event.pageX;
+        var y = event.pageY;
+        var loc = getLocation(x, y)
+        console.log("mouse down");
+    }
+
+    function doMouseUp(event) {
+        var x = event.pageX;
+        var y = event.pageY;
+        var loc = getLocation(x, y)
+        console.log("mouse up");
+    }
+
+    function doMouseMove(event) {
+        var x = event.pageX;
+        var y = event.pageY;
+        var loc = getLocation(x, y)
+        console.log("mouse move");
+    }
+
+    function doMouseOut(event) {
+        var x = event.pageX;
+        var y = event.pageY;
+        var loc = getLocation(x, y)
+        console.log("mouse out");
+
+    }
+
+    //获取当前鼠标点击的坐标
+    function getLocation(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x: (x - bbox.left) * (canvas.width / bbox.width),
+            y: (y - bbox.top) * (canvas.height / bbox.height)
+        };
+    }
+
+</script>
+</body>
+</html>
