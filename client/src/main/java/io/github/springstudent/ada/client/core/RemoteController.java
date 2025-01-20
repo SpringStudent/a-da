@@ -57,7 +57,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
             if (cmdResCapture.getCode() == CmdResCapture.START) {
                 RemoteClient.getRemoteClient().getRemoteScreen().launch();
                 try {
-                    remoteSubscribe = new RemoteSubscribe(new URI("ws://172.16.1.37:11110/desktop?id=xxx"));
+                    remoteSubscribe = new RemoteSubscribe(new URI("ws://172.16.1.37:11110/desktop?id=123"));
                     remoteSubscribe.connect();
                 } catch (Exception e) {
                 }

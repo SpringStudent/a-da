@@ -238,9 +238,11 @@ public class RemoteScreen extends JFrame {
             sessionTimer.stop();
         }
         SwingUtilities.invokeLater(() -> {
+            this.canvasFrame.dispose();
             this.setVisible(false);
             this.dispose();
         });
+
     }
 
     private void fireOnMouseMove(int x, int y) {

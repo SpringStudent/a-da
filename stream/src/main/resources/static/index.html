@@ -13,7 +13,7 @@
     var player;
     var canvas;
     var ajaxObj = new XMLHttpRequest();
-    ajaxObj.open('GET', 'http://172.16.1.72:11111/clients');
+    ajaxObj.open('GET', 'http://172.16.1.37:11110/clients');
     ajaxObj.send();
     ajaxObj.onreadystatechange = function () {
         if (ajaxObj.readyState == 4 && ajaxObj.status == 200) {
@@ -39,7 +39,7 @@
         canvas.addEventListener("mousemove", doMouseMove, false);
         canvas.addEventListener("mouseout", doMouseOut, false);
 
-        var url = 'ws://172.16.1.72:11111/desktop?id=' + id;
+        var url = 'ws://172.16.1.37:11110/desktop?id=' + id;
         if (id != -1) {
             player = new JSMpeg.Player(url, {canvas: canvas});
         }

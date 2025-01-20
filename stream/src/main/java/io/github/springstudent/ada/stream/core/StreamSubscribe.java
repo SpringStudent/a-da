@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author ZhouNing
- * @date 2025/1/20 16:29
+ * @date 2025/1/20 16:27
  **/
 @RestController
 public class StreamSubscribe implements ApplicationRunner {
