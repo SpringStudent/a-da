@@ -75,7 +75,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
                 CompletableFuture.runAsync(() -> {
                     try {
                         remoteGrabber.stop();
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                     }
                 }).whenComplete((unused, throwable) -> {
                     RemoteControlled.this.stop();

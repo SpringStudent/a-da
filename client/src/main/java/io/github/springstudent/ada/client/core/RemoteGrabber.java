@@ -44,14 +44,14 @@ public class RemoteGrabber {
         }
     }
 
-    public void stop() throws FFmpegFrameGrabber.Exception, FFmpegFrameRecorder.Exception {
-        if (grabber != null) {
-            grabber.stop();
-            grabber = null;  // 重置 grabber，允许重新初始化
-        }
+    public void stop() throws Throwable {
         if (recorder != null) {
             recorder.stop();
             recorder = null;  // 重置 recorder，允许重新初始化
+        }
+        if (grabber != null) {
+            grabber.stop();
+            grabber = null;  // 重置 grabber，允许重新初始化
         }
         Log.info("remoteGrabber stop success");
     }
