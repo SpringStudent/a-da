@@ -11,41 +11,46 @@ import org.bytedeco.javacv.Frame;
  */
 public class RemoteGrabber {
     private FFmpegFrameGrabber grabber;
-
     private FFmpegFrameRecorder recorder;
 
     public void start() throws Exception {
-        // 创建FFmpegFrameGrabber来抓取桌面
-        grabber = new FFmpegFrameGrabber("desktop");
-        grabber.setFormat("gdigrab");
-        grabber.setOption("offset_x", "0");
-        grabber.setOption("offset_y", "0");
-        grabber.setOption("framerate", "25");
+        // 确保在重新启动之前，grabber 被正确初始化
+        if (grabber == null) {
+            grabber = new FFmpegFrameGrabber("desktop");
+            grabber.setFormat("gdigrab");
+            grabber.setOption("offset_x", "0");
+            grabber.setOption("offset_y", "0");
+            grabber.setOption("framerate", "25");
+        }
         grabber.start();
-        // 创建FFmpegFrameRecorder来推送流
-        recorder = new FFmpegFrameRecorder("http://172.16.1.37:11110/receive?id=xxx", grabber.getImageWidth(), grabber.getImageHeight());
-        recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
-        recorder.setFormat("mpegts");
-        recorder.setFrameRate(30);
-        recorder.setVideoOption("preset", "ultrafast");
-        recorder.setVideoOption("tune", "zerolatency");
-        recorder.setVideoQuality(10);
+
+        // 确保在重新启动之前，recorder 被正确初始化
+        if (recorder == null) {
+            recorder = new FFmpegFrameRecorder("http://172.16.1.37:11110/receive?id=xxx", grabber.getImageWidth(), grabber.getImageHeight());
+            recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+            recorder.setFormat("mpegts");
+            recorder.setFrameRate(30);
+            recorder.setVideoOption("preset", "ultrafast");
+            recorder.setVideoOption("tune", "zerolatency");
+            recorder.setVideoQuality(10);
+        }
         recorder.start();
-        // 从grabber抓取帧并传递给recorder
+
+        // 从 grabber 获取帧并传递给 recorder
         Frame frame;
         while ((frame = grabber.grab()) != null) {
             recorder.record(frame);
         }
-
     }
 
     public void stop() throws FFmpegFrameGrabber.Exception, FFmpegFrameRecorder.Exception {
         if (grabber != null) {
             grabber.stop();
+            grabber = null;  // 重置 grabber，允许重新初始化
         }
         if (recorder != null) {
             recorder.stop();
+            recorder = null;  // 重置 recorder，允许重新初始化
         }
     }
-
 }
