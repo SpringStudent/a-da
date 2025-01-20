@@ -35,6 +35,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
 
     public RemoteControlled() {
         osId = System.getProperty("os.name").toLowerCase().charAt(0);
+        this.remoteGrabber = new RemoteGrabber();
         try {
             robot = new Robot();
             robot.setAutoDelay(1);
