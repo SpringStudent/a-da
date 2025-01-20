@@ -1,5 +1,6 @@
 package io.github.springstudent.ada.client.core;
 
+import io.github.springstudent.ada.common.log.Log;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
@@ -35,7 +36,7 @@ public class RemoteGrabber {
             recorder.setVideoQuality(10);
         }
         recorder.start();
-
+        Log.info("remoteGrabber start success");
         // 从 grabber 获取帧并传递给 recorder
         Frame frame;
         while ((frame = grabber.grab()) != null) {
@@ -52,5 +53,6 @@ public class RemoteGrabber {
             recorder.stop();
             recorder = null;  // 重置 recorder，允许重新初始化
         }
+        Log.info("remoteGrabber stop success");
     }
 }
