@@ -16,7 +16,6 @@ import java.nio.ByteBuffer;
 
 public class RemoteDesktop extends WebSocketClient {
     private FFmpegFrameGrabber grabber;
-    private CanvasFrame canvas;
     private PipedInputStream pipedInputStream;
     private PipedOutputStream pipedOutputStream;
     private Java2DFrameConverter frameConverter;
@@ -28,7 +27,6 @@ public class RemoteDesktop extends WebSocketClient {
         pipedInputStream.connect(pipedOutputStream);
         grabber = new FFmpegFrameGrabber(pipedInputStream, 0);
         grabber.setFormat("mpegts");
-        canvas = RemoteClient.getRemoteClient().getRemoteScreen();
         new Thread(this::decodeFrames).start();
     }
 
@@ -60,7 +58,6 @@ public class RemoteDesktop extends WebSocketClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        canvas.dispose();
     }
 
     @Override
@@ -72,9 +69,11 @@ public class RemoteDesktop extends WebSocketClient {
         try {
             grabber.start();
             frameConverter = new Java2DFrameConverter();
-            Frame frame;
-            while ((frame = grabber.grabFrame()) != null) {
-                canvas.showImage(frameConverter.convert(frame));
+            while (true) {
+                Frame frame;
+                if ((frame = grabber.grabFrame()) != null) {
+                    RemoteClient.getRemoteClient().getRemoteScreen().showImage(frameConverter.convert(frame));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

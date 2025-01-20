@@ -62,11 +62,13 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(true);
-                try {
-                    remoteGrabber.start();
-                } catch (Exception e) {
-
-                }
+                new Thread(()->{
+                    try {
+                        remoteGrabber.start();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).start();
                 start();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(false);
@@ -82,6 +84,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             this.handleMessage((CmdMouseControl) cmd);
         }
     }
+
 
     @Override
     public String getType() {
