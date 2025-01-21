@@ -34,7 +34,6 @@ public class NettyChannelBrother {
         controlled.writeAndFlush(new CmdResCapture(CmdResCapture.START_));
     }
 
-
     public void stopControll(byte stopType) {
         NettyUtils.updateControllFlag(controller, null);
         NettyUtils.updateControllDeviceCode(controller, null);

@@ -9,7 +9,6 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
@@ -26,8 +25,8 @@ public class RemoteSubscribe extends WebSocketClient {
     private Java2DFrameConverter frameConverter;
     private Thread decodeThread;
 
-    public RemoteSubscribe(URI serverUri) throws IOException {
-        super(serverUri);
+    public RemoteSubscribe(String serverUri) throws Exception {
+        super(new URI(serverUri));
         pipedInputStream = new PipedInputStream();
         pipedOutputStream = new PipedOutputStream();
         pipedInputStream.connect(pipedOutputStream);
@@ -36,6 +35,7 @@ public class RemoteSubscribe extends WebSocketClient {
         frameConverter = new Java2DFrameConverter();
         decodeThread = new Thread(this::decodeFrames);
         decodeThread.start();
+        this.connect();
     }
 
     @Override
@@ -58,6 +58,16 @@ public class RemoteSubscribe extends WebSocketClient {
         } catch (Throwable e) {
             Log.error("RemoteSubscribe.onMessage error", e);
         }
+    }
+
+    @Override
+    public void close() {
+        try {
+            super.close();
+        } catch (Exception e) {
+            Log.error("RemoteSubscribe.close error", e);
+        }
+
     }
 
     @Override

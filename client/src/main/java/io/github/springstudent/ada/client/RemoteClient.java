@@ -40,6 +40,8 @@ public class RemoteClient extends RemoteFrame {
 
     private String clipboardServer;
 
+    private String streamServer;
+
     private boolean connectStatus;
 
     private RemoteScreen remoteScreen;
@@ -48,11 +50,12 @@ public class RemoteClient extends RemoteFrame {
 
     private RemoteController controller;
 
-    public RemoteClient(String serverIp, Integer serverPort, String clipboardServer) {
+    public RemoteClient(String serverIp, Integer serverPort, String clipboardServer, String streamServer) {
         remoteClient = this;
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.clipboardServer = clipboardServer;
+        this.streamServer = streamServer;
         this.controlled = new RemoteControlled();
         this.controller = new RemoteController();
         this.remoteScreen = new RemoteScreen();
@@ -160,13 +163,25 @@ public class RemoteClient extends RemoteFrame {
         return clipboardServer;
     }
 
+    public String getStreamServer() {
+        return streamServer;
+    }
+
+    public String getStreamServerWs() {
+        if (streamServer.startsWith("http")) {
+            return streamServer.replace("http", "ws");
+        } else {
+            return streamServer.replace("https", "wss");
+        }
+    }
+
     public static RemoteClient getRemoteClient() {
         return remoteClient;
     }
 
 
     public static void main(String[] args) throws Exception {
-        RemoteClient remoteClient = new RemoteClient("172.16.1.37", 11112, "http://172.16.1.37:12345/remote-desktop-control");
+        RemoteClient remoteClient = new RemoteClient("172.16.1.37", 11112, null, "http://172.16.1.37:11110");
     }
 
 }

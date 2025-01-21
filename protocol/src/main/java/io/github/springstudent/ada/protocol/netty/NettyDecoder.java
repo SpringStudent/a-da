@@ -43,6 +43,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
             case ResCliInfo:
                 list.add(CmdResCliInfo.decode(byteBuf));
                 break;
+            case ResStream:
+                list.add(CmdResStream.decode(byteBuf));
+                break;
             case KeyControl:
                 list.add(CmdKeyControl.decode(byteBuf));
                 break;

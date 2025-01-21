@@ -10,6 +10,7 @@ public enum CmdType {
     ReqRemoteClipboard,
     ResCliInfo,
     ResCapture,
+    ResStream,
     ResPong,
     ResRemoteClipboard,
     Capture,

@@ -8,7 +8,6 @@ import io.github.springstudent.ada.protocol.cmd.*;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,18 +55,10 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START) {
                 RemoteClient.getRemoteClient().getRemoteScreen().launch();
-                try {
-                    remoteSubscribe = new RemoteSubscribe(new URI("ws://172.16.1.37:11110/desktop?id=xxx"));
-                    remoteSubscribe.connect();
-                } catch (Exception e) {
-                }
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 if (remoteSubscribe != null) {
-                    try {
-                        remoteSubscribe.close();
-                    } catch (Exception e) {
-                    }
+                    remoteSubscribe.close();
                 }
                 stop();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_BYCONTROLLED) {
@@ -88,6 +79,12 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 showMessageDialog("被控制端不在线", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.CONTROL) {
                 showMessageDialog("请先断开其他远程控制中的连接", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (cmd.getType().equals(CmdType.ResStream)) {
+            try {
+                remoteSubscribe = new RemoteSubscribe(((CmdResStream) cmd).getPlayUrl());
+            } catch (Exception e) {
+                Log.error("remote subscribe error", e);
             }
         }
     }
