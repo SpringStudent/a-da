@@ -13,8 +13,8 @@ import org.bytedeco.javacv.Frame;
 public class RemoteGrabber {
     private Thread thread;
 
-    public void start(){
-        this.thread = new Thread(() -> {
+    public void start() {
+        thread = new Thread(() -> {
             FFmpegFrameGrabber grabber = null;
             FFmpegFrameRecorder recorder = null;
             try {
@@ -57,9 +57,10 @@ public class RemoteGrabber {
                 Log.info("remoteGrabber stop success");
             }
         });
+        thread.start();
     }
 
-    public void stop(){
+    public void stop() {
         Log.info("remoteGrabber to stop");
         if (thread != null) {
             thread.interrupt();
