@@ -10,7 +10,6 @@ import java.awt.event.InputEvent;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 import static java.awt.event.KeyEvent.*;
 
@@ -64,30 +63,19 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(true);
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        remoteGrabber.start();
-                    } catch (Exception e) {
-                    }
-                }).whenComplete((unused, throwable) -> RemoteControlled.this.start());
+                remoteGrabber.start();
+                start();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(false);
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        remoteGrabber.stop();
-                    } catch (Throwable e) {
-                    }
-                }).whenComplete((unused, throwable) -> {
-                    RemoteControlled.this.stop();
-                });
+                remoteGrabber.stop();
+                stop();
+            } else if (cmd.getType().equals(CmdType.KeyControl)) {
+                this.handleMessage((CmdKeyControl) cmd);
+            } else if (cmd.getType().equals(CmdType.MouseControl)) {
+                this.handleMessage((CmdMouseControl) cmd);
             }
-        } else if (cmd.getType().equals(CmdType.KeyControl)) {
-            this.handleMessage((CmdKeyControl) cmd);
-        } else if (cmd.getType().equals(CmdType.MouseControl)) {
-            this.handleMessage((CmdMouseControl) cmd);
         }
     }
-
 
     @Override
     public String getType() {
