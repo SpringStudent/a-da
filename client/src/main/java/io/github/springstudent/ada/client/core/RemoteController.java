@@ -64,7 +64,10 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 if (remoteSubscribe != null) {
-                    remoteSubscribe.close();
+                    try {
+                        remoteSubscribe.close();
+                    } catch (Exception e) {
+                    }
                 }
                 stop();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_BYCONTROLLED) {

@@ -19,12 +19,10 @@ import java.nio.ByteBuffer;
  * @date 2025/1/20 16:04
  **/
 public class RemoteSubscribe extends WebSocketClient {
-
     private FFmpegFrameGrabber grabber;
     private PipedInputStream pipedInputStream;
     private PipedOutputStream pipedOutputStream;
     private Java2DFrameConverter frameConverter;
-
     private Thread decodeThread;
 
     public RemoteSubscribe(URI serverUri) throws IOException {
@@ -68,7 +66,6 @@ public class RemoteSubscribe extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
-        System.out.println("111123134");
         stop();
     }
 
@@ -105,12 +102,12 @@ public class RemoteSubscribe extends WebSocketClient {
             }
         } catch (Throwable e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 if (grabber != null) {
                     grabber.stop();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
             }
         }
     }

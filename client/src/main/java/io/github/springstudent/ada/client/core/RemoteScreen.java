@@ -71,6 +71,12 @@ public class RemoteScreen extends JFrame {
         this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
     }
 
+    private void closeCanvasPanel() {
+        if (this.canvasFrame != null) {
+            this.canvasFrame.dispose();
+        }
+    }
+
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         //发送win键
@@ -238,9 +244,7 @@ public class RemoteScreen extends JFrame {
             sessionTimer.stop();
         }
         SwingUtilities.invokeLater(() -> {
-            this.canvasFrame.dispose();
             this.setVisible(false);
-            this.dispose();
         });
 
     }
