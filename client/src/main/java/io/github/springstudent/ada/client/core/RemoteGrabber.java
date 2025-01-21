@@ -45,11 +45,9 @@ public class RemoteGrabber {
                 try {
                     if (recorder != null) {
                         recorder.stop();
-                        recorder = null;
                     }
                     if (grabber != null) {
                         grabber.stop();
-                        grabber = null;
                     }
                 } catch (Exception e) {
 
