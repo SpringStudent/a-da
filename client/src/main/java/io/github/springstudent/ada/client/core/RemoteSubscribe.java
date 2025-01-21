@@ -1,6 +1,7 @@
 package io.github.springstudent.ada.client.core;
 
 import io.github.springstudent.ada.client.RemoteClient;
+import io.github.springstudent.ada.common.log.Log;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
@@ -52,10 +53,10 @@ public class RemoteSubscribe extends WebSocketClient {
         // 接收二进制数据并写入 PipedOutputStream
         try {
             byte[] bytes = byteBuffer.array();
-            System.out.println("###接收流媒体数据");
+            Log.info("RemoteSubscribe.onMessage byte size =" + bytes.length);
             pipedOutputStream.write(bytes);
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.error("RemoteSubscribe.onMessage error", e);
         }
     }
 
@@ -71,6 +72,7 @@ public class RemoteSubscribe extends WebSocketClient {
 
     private void stop() {
         try {
+            Log.info("RemoteSubscribe.stop start");
             if (this.getConnection() != null && this.getConnection().isOpen()) {
                 this.close();
             }
@@ -83,10 +85,8 @@ public class RemoteSubscribe extends WebSocketClient {
             if (pipedOutputStream != null) {
                 pipedOutputStream.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.error("RemoteSubscribe.stop error", e);
         }
     }
 
@@ -101,8 +101,9 @@ public class RemoteSubscribe extends WebSocketClient {
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.error("RemoteSubscribe.decodeFrames error", e);
         } finally {
+            Log.info("RemoteSubscribe.decodeFrames stop");
             try {
                 if (grabber != null) {
                     grabber.stop();
