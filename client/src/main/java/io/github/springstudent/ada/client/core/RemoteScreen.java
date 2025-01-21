@@ -229,6 +229,15 @@ public class RemoteScreen extends JFrame {
         this.canvasFrame.showImage(img);
     }
 
+    public void resizeCanvas() {
+        if (captureWidth <= 0 || captureHeight <= 0) {
+            this.canvasFrame.setCanvasSize(800, 600);
+        } else {
+            this.canvasFrame.setCanvasSize(captureWidth, captureHeight);
+        }
+    }
+
+
     public void launch() {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {

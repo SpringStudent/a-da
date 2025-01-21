@@ -93,11 +93,13 @@ public class RemoteSubscribe extends WebSocketClient {
     private void decodeFrames() {
         try {
             grabber.start();
+            RemoteScreen remoteScreen = RemoteClient.getRemoteClient().getRemoteScreen();
+            remoteScreen.resizeCanvas();
             while (!Thread.currentThread().isInterrupted()) {
                 Frame frame;
                 BufferedImage img;
                 if ((frame = grabber.grabFrame()) != null && (img = frameConverter.convert(frame)) != null) {
-                    RemoteClient.getRemoteClient().getRemoteScreen().showImg(img);
+                    remoteScreen.showImg(img);
                 }
             }
         } catch (Throwable e) {
