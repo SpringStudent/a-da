@@ -35,7 +35,7 @@ public class RemoteGrabber {
                 recorder.start();
                 Log.info("remoteGrabber start success");
                 Frame frame;
-                while ((frame = grabber.grab()) != null&&Thread.currentThread().isInterrupted()) {
+                while ((frame = grabber.grab()) != null && !Thread.currentThread().isInterrupted()) {
                     recorder.record(frame);
                 }
             } catch (Exception e) {
