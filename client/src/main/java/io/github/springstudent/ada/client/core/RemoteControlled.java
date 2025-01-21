@@ -69,11 +69,11 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(false);
                 remoteGrabber.stop();
                 stop();
-            } else if (cmd.getType().equals(CmdType.KeyControl)) {
-                this.handleMessage((CmdKeyControl) cmd);
-            } else if (cmd.getType().equals(CmdType.MouseControl)) {
-                this.handleMessage((CmdMouseControl) cmd);
             }
+        } else if (cmd.getType().equals(CmdType.KeyControl)) {
+            this.handleMessage((CmdKeyControl) cmd);
+        } else if (cmd.getType().equals(CmdType.MouseControl)) {
+            this.handleMessage((CmdMouseControl) cmd);
         }
     }
 
