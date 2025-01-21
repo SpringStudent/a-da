@@ -22,7 +22,7 @@ public class RemoteGrabber {
                 grabber.setFormat("gdigrab");
                 grabber.setOption("offset_x", "0");
                 grabber.setOption("offset_y", "0");
-                grabber.setOption("framerate", "25");
+                grabber.setOption("framerate", "30");
                 grabber.start();
 
                 recorder = new FFmpegFrameRecorder("http://172.16.1.37:11110/receive?id=xxx", grabber.getImageWidth(), grabber.getImageHeight());
