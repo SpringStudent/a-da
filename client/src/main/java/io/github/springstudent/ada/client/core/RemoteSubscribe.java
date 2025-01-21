@@ -25,6 +25,8 @@ public class RemoteSubscribe extends WebSocketClient {
     private PipedOutputStream pipedOutputStream;
     private Java2DFrameConverter frameConverter;
 
+    private Thread decodeThread;
+
     public RemoteSubscribe(URI serverUri) throws IOException {
         super(serverUri);
         pipedInputStream = new PipedInputStream();
@@ -32,8 +34,9 @@ public class RemoteSubscribe extends WebSocketClient {
         pipedInputStream.connect(pipedOutputStream);
         grabber = new FFmpegFrameGrabber(pipedInputStream, 0);
         grabber.setFormat("mpegts");
-        this.frameConverter = new Java2DFrameConverter();
-        new Thread(this::decodeFrames).start();
+        frameConverter = new Java2DFrameConverter();
+        decodeThread = new Thread(this::decodeFrames);
+        decodeThread.start();
     }
 
     @Override
@@ -53,39 +56,63 @@ public class RemoteSubscribe extends WebSocketClient {
             byte[] bytes = byteBuffer.array();
             System.out.println("###接收流媒体数据");
             pipedOutputStream.write(bytes);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        try {
-            grabber.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        stop();
     }
 
     @Override
     public void onError(Exception ex) {
-        ex.printStackTrace();
+        System.out.println("111123134");
+        stop();
+    }
+
+    private void stop() {
+        try {
+            if (this.getConnection() != null && this.getConnection().isOpen()) {
+                this.close();
+            }
+            if (decodeThread != null && decodeThread.isAlive()) {
+                decodeThread.interrupt();
+            }
+            if (pipedInputStream != null) {
+                pipedInputStream.close();
+            }
+            if (pipedOutputStream != null) {
+                pipedOutputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     private void decodeFrames() {
         try {
             grabber.start();
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 Frame frame;
                 BufferedImage img;
                 if ((frame = grabber.grabFrame()) != null && (img = frameConverter.convert(frame)) != null) {
                     RemoteClient.getRemoteClient().getRemoteScreen().showImg(img);
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
+        }finally {
+            try {
+                if (grabber != null) {
+                    grabber.stop();
+                }
+            }catch (Exception e){
+            }
         }
     }
-
 
 }
