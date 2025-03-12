@@ -1,7 +1,13 @@
-#### a-da(ā dà)又译为阿大，以我儿子喜欢的词命名的一个开源的远程桌面项目.
+#### a-da(ā dà)又译为阿大
 
-基于java+netty+javacv+swing实现，只在windows上测试通过，目前只能算个半成品，如果有需要远程桌面使用的，可以移步
-我另一个开源项目：https://github.com/SpringStudent/remote-desktop-control
+### 以我儿子喜欢的词命名的一个开源的远程桌面控制系统
+
+基于java+netty+javacv+swing技术,通过流媒体传输画面从而保证帧率稳定，目前仅支持windows上，
+如果有mac/ubuntu等系统使用需求可移步我另一个开源项目：https://github.com/SpringStudent/remote-desktop-control
+
+### 视频演示
+
+[Bilibili Video](https://www.bilibili.com/video/BV1fRQ7YSEDo/)
 
 #### TODO
 
