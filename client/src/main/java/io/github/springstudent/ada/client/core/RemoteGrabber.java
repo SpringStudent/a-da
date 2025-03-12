@@ -25,17 +25,21 @@ public class RemoteGrabber {
                 grabber.setFormat("gdigrab");
                 grabber.setOption("offset_x", "0");
                 grabber.setOption("offset_y", "0");
-                grabber.setOption("framerate", "30");
+                grabber.setOption("framerate", "45");
+                grabber.setOption("hwaccel", "auto");
+                grabber.setOption("threads", "auto");
                 grabber.start();
 
                 String streamId = IdUtil.fastSimpleUUID();
                 recorder = new FFmpegFrameRecorder(RemoteClient.getRemoteClient().getStreamServer() + "/receive?id=" + streamId, grabber.getImageWidth(), grabber.getImageHeight());
-                recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+//                recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
                 recorder.setFormat("mpegts");
-                recorder.setFrameRate(30);
+                recorder.setFrameRate(45);
                 recorder.setVideoOption("preset", "ultrafast");
                 recorder.setVideoOption("tune", "zerolatency");
-                recorder.setVideoQuality(10);
+                recorder.setVideoQuality(8);
+                recorder.setOption("threads", "auto");
                 recorder.start();
                 Log.info("remoteGrabber start success");
 

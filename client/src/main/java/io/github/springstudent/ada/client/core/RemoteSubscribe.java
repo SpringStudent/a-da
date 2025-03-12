@@ -32,6 +32,10 @@ public class RemoteSubscribe extends WebSocketClient {
         pipedInputStream.connect(pipedOutputStream);
         grabber = new FFmpegFrameGrabber(pipedInputStream, 0);
         grabber.setFormat("mpegts");
+        grabber.setOption("hwaccel", "auto");
+        grabber.setOption("threads", "auto");
+        grabber.setOption("analyzeduration", "1000000");
+        grabber.setOption("probesize", "1000000");
         frameConverter = new Java2DFrameConverter();
         decodeThread = new Thread(this::decodeFrames);
         decodeThread.start();
