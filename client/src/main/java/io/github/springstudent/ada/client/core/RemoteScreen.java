@@ -70,8 +70,6 @@ public class RemoteScreen extends JFrame {
     private void initCanvasPanel() {
         this.canvasFrame = new CanvasFrame("ddd");
         canvasFrame.setVisible(false);
-        canvasFrame.getCanvas().setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
-                new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "invisible"));
         this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
     }
 
