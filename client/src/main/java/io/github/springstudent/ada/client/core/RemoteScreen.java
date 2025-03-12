@@ -34,6 +34,8 @@ public class RemoteScreen extends JFrame {
 
     private JToggleButton ctrlKeyToggleButton;
 
+    private final AtomicBoolean controlActivated = new AtomicBoolean(false);
+
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
@@ -152,14 +154,16 @@ public class RemoteScreen extends JFrame {
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent ev) {
-                fireOnKeyReleased(-1, Character.MIN_VALUE);
-                if (windowsKeyActivated.get()) {
-                    windowsKeyToggleButton.setSelected(false);
-                    windowsKeyActivated.set(!windowsKeyActivated.get());
-                }
-                if (ctrlKeyActivated.get()) {
-                    ctrlKeyToggleButton.setSelected(false);
-                    ctrlKeyActivated.set(!ctrlKeyActivated.get());
+                if (controlActivated.get()) {
+                    fireOnKeyReleased(-1, Character.MIN_VALUE);
+                    if (windowsKeyActivated.get()) {
+                        windowsKeyToggleButton.setSelected(false);
+                        windowsKeyActivated.set(!windowsKeyActivated.get());
+                    }
+                    if (ctrlKeyActivated.get()) {
+                        ctrlKeyToggleButton.setSelected(false);
+                        ctrlKeyActivated.set(!ctrlKeyActivated.get());
+                    }
                 }
             }
         });
@@ -169,29 +173,39 @@ public class RemoteScreen extends JFrame {
         canvasFrame.getCanvas().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
-                fireOnMousePressed(ev.getX(), ev.getY(), ev.getButton());
+                if (controlActivated.get()) {
+                    fireOnMousePressed(ev.getX(), ev.getY(), ev.getButton());
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent ev) {
-                fireOnMouseReleased(ev.getX(), ev.getY(), ev.getButton());
+                if (controlActivated.get()) {
+                    fireOnMouseReleased(ev.getX(), ev.getY(), ev.getButton());
+                }
             }
         });
 
         canvasFrame.getCanvas().addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent ev) {
-                fireOnMouseMove(ev.getX(), ev.getY());
+                if (controlActivated.get()) {
+                    fireOnMouseMove(ev.getX(), ev.getY());
+                }
             }
 
             @Override
             public void mouseMoved(MouseEvent ev) {
-                fireOnMouseMove(ev.getX(), ev.getY());
+                if (controlActivated.get()) {
+                    fireOnMouseMove(ev.getX(), ev.getY());
+                }
             }
         });
 
         canvasFrame.getCanvas().addMouseWheelListener(ev -> {
-            fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
+            if (controlActivated.get()) {
+                fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
+            }
         });
     }
 
@@ -199,12 +213,16 @@ public class RemoteScreen extends JFrame {
         canvasFrame.getCanvas().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent ev) {
-                fireOnKeyPressed(ev.getKeyCode(), ev.getKeyChar());
+                if (controlActivated.get()) {
+                    fireOnKeyPressed(ev.getKeyCode(), ev.getKeyChar());
+                }
             }
 
             @Override
             public void keyReleased(KeyEvent ev) {
-                fireOnKeyReleased(ev.getKeyCode(), ev.getKeyChar());
+                if (controlActivated.get()) {
+                    fireOnKeyReleased(ev.getKeyCode(), ev.getKeyChar());
+                }
             }
         });
     }
@@ -246,13 +264,18 @@ public class RemoteScreen extends JFrame {
         if (sessionTimer != null) {
             sessionTimer.stop();
         }
-        if(canvasFrame!=null){
+        if (canvasFrame != null) {
             canvasFrame.dispose();
         }
+        controlActivated.set(false);
         SwingUtilities.invokeLater(() -> {
             this.setVisible(false);
         });
 
+    }
+
+    public AtomicBoolean getControlActivated() {
+        return controlActivated;
     }
 
     private void fireOnMouseMove(int x, int y) {
