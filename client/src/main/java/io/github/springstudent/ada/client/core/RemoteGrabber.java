@@ -32,8 +32,8 @@ public class RemoteGrabber {
 
                 String streamId = IdUtil.fastSimpleUUID();
                 recorder = new FFmpegFrameRecorder(RemoteClient.getRemoteClient().getStreamServer() + "/receive?id=" + streamId, grabber.getImageWidth(), grabber.getImageHeight());
-//                recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
-                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+                recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+//                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
                 recorder.setFormat("mpegts");
                 recorder.setFrameRate(45);
                 recorder.setVideoOption("preset", "ultrafast");
