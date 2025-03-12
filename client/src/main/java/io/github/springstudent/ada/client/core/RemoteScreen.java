@@ -67,14 +67,9 @@ public class RemoteScreen extends JFrame {
 
     private void initCanvasPanel() {
         this.canvasFrame = new CanvasFrame("ddd");
+        canvasFrame.setUndecorated(true);
         canvasFrame.setVisible(false);
         this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
-    }
-
-    private void closeCanvasPanel() {
-        if (this.canvasFrame != null) {
-            this.canvasFrame.dispose();
-        }
     }
 
     private void initMenuBar() {
