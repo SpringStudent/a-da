@@ -39,7 +39,7 @@ public class RemoteGrabber {
                 recorder.setFrameRate(60);
                 recorder.setVideoOption("preset", "ultrafast");
                 recorder.setVideoOption("tune", "zerolatency");
-                recorder.setVideoQuality(4);
+                recorder.setVideoQuality(6);
                 recorder.setOption("threads", "auto");
                 recorder.start();
                 Log.info("remoteGrabber start success");
