@@ -42,17 +42,17 @@ public abstract class RemoteControll implements ClipboardOwner {
     private String downloadDir;
 
     public RemoteControll() {
-        this.rootDir = getProperty("java.io.tmpdir") + File.separator + "remoteDeskopControll";
+        this.rootDir = getProperty("java.io.tmpdir") + File.separator + "ada";
         if (FileUtil.exist(rootDir)) {
             FileUtil.clean(rootDir);
         } else {
             FileUtil.mkdir(rootDir);
         }
-        this.uploadDir = rootDir + File.separator + "rmdupload";
+        this.uploadDir = rootDir + File.separator + "upload";
         if (!FileUtil.exist(uploadDir)) {
             FileUtil.mkdir(uploadDir);
         }
-        this.downloadDir = rootDir + File.separator + "rmddownload";
+        this.downloadDir = rootDir + File.separator + "download";
         if (!FileUtil.exist(downloadDir)) {
             FileUtil.mkdir(downloadDir);
         }
