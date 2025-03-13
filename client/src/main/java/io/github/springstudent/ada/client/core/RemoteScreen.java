@@ -243,7 +243,7 @@ public class RemoteScreen extends JFrame {
 
     public void resizeCanvas() {
         if (captureWidth <= 0 || captureHeight <= 0) {
-            this.canvasFrame.setCanvasSize(800, 600);
+            this.canvasFrame.setCanvasSize(getWidth(),getHeight());
         } else {
             this.canvasFrame.setCanvasSize(captureWidth, captureHeight);
         }
