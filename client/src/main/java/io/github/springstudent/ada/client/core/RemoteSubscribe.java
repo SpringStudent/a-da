@@ -44,12 +44,12 @@ public class RemoteSubscribe extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        System.out.println("Connected to WebSocket server");
+        Log.info("connected to stream server");
     }
 
     @Override
     public void onMessage(String message) {
-        System.out.println("Received text message: " + message);
+        Log.info("received text message: " + message);
     }
 
     @Override
