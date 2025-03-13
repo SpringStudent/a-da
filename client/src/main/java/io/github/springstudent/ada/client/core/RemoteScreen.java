@@ -1,6 +1,7 @@
 package io.github.springstudent.ada.client.core;
 
 import io.github.springstudent.ada.client.RemoteClient;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 import org.bytedeco.javacv.CanvasFrame;
 
 import javax.swing.*;
@@ -29,6 +30,10 @@ public class RemoteScreen extends JFrame {
     private CanvasFrame canvasFrame;
 
     private Timer sessionTimer;
+
+    private JButton reqClipboardButton;
+
+    private JButton sendClipboardButton;
 
     private JToggleButton windowsKeyToggleButton;
 
@@ -68,7 +73,7 @@ public class RemoteScreen extends JFrame {
     }
 
     private void initCanvasPanel() {
-        this.canvasFrame = new CanvasFrame("ddd");
+        this.canvasFrame = new CanvasFrame("RemoteScreen");
         canvasFrame.setVisible(false);
         this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
     }
@@ -82,6 +87,17 @@ public class RemoteScreen extends JFrame {
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
         menuBar.add(ctrlKeyToggleButton);
         menuBar.add(Box.createHorizontalStrut(5));
+        //粘贴板按钮
+        if (EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())) {
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+            this.reqClipboardButton = createButton(RemoteClient.getRemoteClient().getController().createRequireRemoteClipboardAction());
+            this.sendClipboardButton = createButton(RemoteClient.getRemoteClient().getController().createSendLoacalClibboardAction());
+            buttonPanel.add(reqClipboardButton);
+            buttonPanel.add(Box.createHorizontalStrut(5));
+            buttonPanel.add(sendClipboardButton);
+            menuBar.add(buttonPanel);
+        }
         this.setJMenuBar(menuBar);
     }
 
@@ -119,6 +135,10 @@ public class RemoteScreen extends JFrame {
         return sendCtrlKey;
     }
 
+    public final void transferClipboarButton(boolean enabled) {
+        this.sendClipboardButton.setEnabled(enabled);
+        this.reqClipboardButton.setEnabled(enabled);
+    }
 
     protected JToggleButton createToggleButton(Action action) {
         final JToggleButton button = new JToggleButton();

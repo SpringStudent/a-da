@@ -181,7 +181,7 @@ public class RemoteClient extends RemoteFrame {
 
 
     public static void main(String[] args) throws Exception {
-        RemoteClient remoteClient = new RemoteClient("172.16.1.37", 11112, null, "http://172.16.1.37:11110");
+        new RemoteClient("172.16.1.37", 11112, "http://172.16.1.37:11111/transport", "http://172.16.1.37:11110");
     }
 
 }

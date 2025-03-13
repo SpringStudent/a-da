@@ -17,8 +17,7 @@ public class RemoteChannelHandler extends SimpleChannelInboundHandler<Cmd> {
         try {
             RemoteClient.getRemoteClient().handleCmd(ctx, cmd);
         } catch (Exception e) {
-            Log.info("client channelRead0 errro");
-            e.printStackTrace();
+            Log.error("client channelRead0 error",e);
         }
     }
 
@@ -34,7 +33,7 @@ public class RemoteChannelHandler extends SimpleChannelInboundHandler<Cmd> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        Log.error("client exceptionCaught error",cause);
         super.exceptionCaught(ctx, cause);
     }
 }
