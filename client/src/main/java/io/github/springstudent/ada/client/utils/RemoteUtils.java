@@ -1,4 +1,4 @@
-package io.github.springstudent.ada.common.utils;
+package io.github.springstudent.ada.client.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
@@ -9,6 +9,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.github.springstudent.ada.common.bean.FileInfo;
 import io.github.springstudent.ada.common.bean.RemoteClipboard;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

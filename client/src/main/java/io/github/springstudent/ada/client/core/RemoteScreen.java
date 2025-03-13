@@ -1,12 +1,15 @@
 package io.github.springstudent.ada.client.core;
 
 import io.github.springstudent.ada.client.RemoteClient;
+import io.github.springstudent.ada.client.bean.StatusBar;
+import io.github.springstudent.ada.client.monitor.Counter;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
 import org.bytedeco.javacv.CanvasFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static io.github.springstudent.ada.common.utils.ImageUtilities.getOrCreateIcon;
 import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static java.lang.String.format;
 
 /**
  * @author ZhouNing
@@ -28,6 +32,8 @@ public class RemoteScreen extends JFrame {
     private int captureHeight;
 
     private CanvasFrame canvasFrame;
+
+    private StatusBar statusBar;
 
     private Timer sessionTimer;
 
@@ -56,6 +62,7 @@ public class RemoteScreen extends JFrame {
         setFocusTraversalKeysEnabled(false);
         initMenuBar();
         initListeners();
+        initStatusBar();
     }
 
 
@@ -169,6 +176,32 @@ public class RemoteScreen extends JFrame {
         addMinMaximizedListener();
     }
 
+    private void initStatusBar() {
+        final StatusBar statusBar = new StatusBar();
+        final Component horizontalStrut = Box.createHorizontalStrut(20);
+        statusBar.add(horizontalStrut);
+        for (Counter<?> counter : RemoteClient.getRemoteClient().getController().getCounters()) {
+            statusBar.addSeparator();
+            statusBar.addCounter(counter, counter.getWidth());
+        }
+        statusBar.addSeparator();
+        statusBar.addRamInfo();
+        statusBar.addSeparator();
+        statusBar.addConnectionDuration();
+        statusBar.add(horizontalStrut);
+        statusBar.add(Box.createHorizontalStrut(10));
+        add(statusBar, BorderLayout.SOUTH);
+        this.statusBar = statusBar;
+        updateInputLocale();
+        new Timer(5000, e -> updateInputLocale()).start();
+    }
+
+    private void updateInputLocale() {
+        String currentKeyboardLayout = InputContext.getInstance().getLocale().toString();
+        if (!currentKeyboardLayout.equals(statusBar.getKeyboardLayout())) {
+            statusBar.setKeyboardLayout(currentKeyboardLayout);
+        }
+    }
 
     private void addFocusListener() {
         addFocusListener(new FocusAdapter() {
@@ -263,7 +296,7 @@ public class RemoteScreen extends JFrame {
 
     public void resizeCanvas() {
         if (captureWidth <= 0 || captureHeight <= 0) {
-            this.canvasFrame.setCanvasSize(getWidth(),getHeight());
+            this.canvasFrame.setCanvasSize(getWidth(), getHeight());
         } else {
             this.canvasFrame.setCanvasSize(captureWidth, captureHeight);
         }
@@ -274,8 +307,11 @@ public class RemoteScreen extends JFrame {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
+            statusBar.setSessionDuration(format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60));
         });
         sessionTimer.start();
+        sendClipboardButton.setEnabled(true);
+        reqClipboardButton.setEnabled(true);
         SwingUtilities.invokeLater(() -> this.setVisible(true));
 
     }

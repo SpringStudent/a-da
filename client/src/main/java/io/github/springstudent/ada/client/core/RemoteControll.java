@@ -4,11 +4,11 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.client.bean.TransferableFiles;
+import io.github.springstudent.ada.client.utils.RemoteUtils;
 import io.github.springstudent.ada.common.bean.FileInfo;
 import io.github.springstudent.ada.common.bean.RemoteClipboard;
 import io.github.springstudent.ada.common.log.Log;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
-import io.github.springstudent.ada.common.utils.RemoteUtils;
 import io.github.springstudent.ada.protocol.cmd.*;
 import io.github.springstudent.ada.protocol.netty.NettyUtils;
 import io.netty.channel.Channel;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static io.github.springstudent.ada.common.utils.RemoteUtils.REQUEST_URL_KEY;
-import static io.github.springstudent.ada.common.utils.RemoteUtils.TMP_PATH_KEY;
+import static io.github.springstudent.ada.client.utils.RemoteUtils.REQUEST_URL_KEY;
+import static io.github.springstudent.ada.client.utils.RemoteUtils.TMP_PATH_KEY;
 import static java.lang.System.getProperty;
 
 /**
@@ -289,7 +289,6 @@ public abstract class RemoteControll implements ClipboardOwner {
             }
         }
     }
-
 
     public abstract void handleCmd(Cmd cmd);
 

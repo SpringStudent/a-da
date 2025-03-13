@@ -21,7 +21,6 @@ import static java.awt.event.KeyEvent.*;
  **/
 public class RemoteControlled extends RemoteControll implements RemoteScreenRobot {
 
-
     private static final char UNIX_SEPARATOR_CHAR = '/';
 
     private final Set<Integer> pressedKeys = new HashSet<>();

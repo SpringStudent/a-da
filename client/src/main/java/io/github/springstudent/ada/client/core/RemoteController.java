@@ -2,6 +2,8 @@ package io.github.springstudent.ada.client.core;
 
 
 import io.github.springstudent.ada.client.RemoteClient;
+import io.github.springstudent.ada.client.monitor.BitCounter;
+import io.github.springstudent.ada.client.monitor.Counter;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.log.Log;
 import io.github.springstudent.ada.protocol.cmd.*;
@@ -9,6 +11,8 @@ import io.github.springstudent.ada.protocol.cmd.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,9 +30,19 @@ import static java.lang.String.format;
 public class RemoteController extends RemoteControll implements RemoteScreenListener {
     private String deviceCode;
 
+    private ArrayList<Counter<?>> counters;
+
+    private BitCounter receivedBitCounter;
+
     private RemoteSubscribe remoteSubscribe;
 
     public RemoteController() {
+        receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
+        counters = new ArrayList<>(Arrays.asList(receivedBitCounter));
+    }
+
+    public ArrayList<Counter<?>> getCounters() {
+        return counters;
     }
 
     @Override
