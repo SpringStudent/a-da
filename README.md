@@ -5,7 +5,6 @@
 
 #### 系统演示
 
-[Bilibili Video](https://www.bilibili.com/video/BV1fRQ7YSEDo/)
 [Bilibili Video](https://www.bilibili.com/video/BV1roDfYiEjg/)
 
 #### TODO
