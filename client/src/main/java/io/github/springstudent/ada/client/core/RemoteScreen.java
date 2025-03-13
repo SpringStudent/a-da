@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.github.springstudent.ada.common.utils.ImageUtilities.getOrCreateIcon;
@@ -26,6 +27,8 @@ import static java.lang.String.format;
 public class RemoteScreen extends JFrame {
 
     private transient RemoteScreenListener listeners;
+
+    private ArrayList<Counter<?>> counters = new ArrayList<>();
 
     private int captureWidth;
 
@@ -55,7 +58,8 @@ public class RemoteScreen extends JFrame {
 
     public RemoteScreen() {
         super("远程桌面");
-        this.listeners = RemoteClient.getRemoteClient().getController();
+        listeners = RemoteClient.getRemoteClient().getController();
+        counters.addAll(RemoteClient.getRemoteClient().getController().getCounters());
         initFrame();
         initCanvasPanel();
         //allows for seeing the TAB with a regular KEY listener ...
@@ -180,7 +184,7 @@ public class RemoteScreen extends JFrame {
         final StatusBar statusBar = new StatusBar();
         final Component horizontalStrut = Box.createHorizontalStrut(20);
         statusBar.add(horizontalStrut);
-        for (Counter<?> counter : RemoteClient.getRemoteClient().getController().getCounters()) {
+        for (Counter<?> counter : counters) {
             statusBar.addSeparator();
             statusBar.addCounter(counter, counter.getWidth());
         }

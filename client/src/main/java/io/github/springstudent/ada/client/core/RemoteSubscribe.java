@@ -57,6 +57,7 @@ public class RemoteSubscribe extends WebSocketClient {
         // 接收二进制数据并写入 PipedOutputStream
         try {
             byte[] bytes = byteBuffer.array();
+            RemoteClient.getRemoteClient().getController().getReceivedBitCounter().add(bytes.length * 8);
             Log.info("RemoteSubscribe.onMessage byte size =" + bytes.length);
             pipedOutputStream.write(bytes);
         } catch (Throwable e) {

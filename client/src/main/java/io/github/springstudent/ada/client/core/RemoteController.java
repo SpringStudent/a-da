@@ -38,7 +38,12 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     public RemoteController() {
         receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
+        receivedBitCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(receivedBitCounter));
+    }
+
+    public BitCounter getReceivedBitCounter() {
+        return receivedBitCounter;
     }
 
     public ArrayList<Counter<?>> getCounters() {
