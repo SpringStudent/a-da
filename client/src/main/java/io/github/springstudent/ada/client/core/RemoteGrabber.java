@@ -9,6 +9,8 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 
+import java.awt.*;
+
 /**
  * @author zhouning
  * @date 2025/01/18 14:30
@@ -17,6 +19,7 @@ public class RemoteGrabber {
     private Thread thread;
 
     public void start() {
+
         thread = new Thread(() -> {
             FFmpegFrameGrabber grabber = null;
             FFmpegFrameRecorder recorder = null;
@@ -29,6 +32,7 @@ public class RemoteGrabber {
                 grabber.setOption("framerate", "45");
                 grabber.setOption("hwaccel", "auto");
                 grabber.setOption("threads", "auto");
+                grabber.setOption("video_size", videoSize());
                 grabber.start();
 
                 String streamId = IdUtil.fastSimpleUUID();
@@ -70,6 +74,12 @@ public class RemoteGrabber {
 
     private void publishStream(String streamId) {
         RemoteClient.getRemoteClient().getControlled().fireCmd(new CmdResStream(RemoteClient.getRemoteClient().getStreamServerWs() + "/desktop?id=" + streamId));
+    }
+
+    private String videoSize(){
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        DisplayMode dm = ge.getDefaultScreenDevice().getDisplayMode();
+        return String.format("%dx%d", dm.getWidth(), dm.getHeight());
     }
 
     public void stop() {
