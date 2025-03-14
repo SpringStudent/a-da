@@ -1,14 +1,17 @@
-#### a-da(ā dà)中译为"阿大",以我儿子喜欢的词命名的一个开源的远程桌面控制系统
+[English](README.md) | [中文](README_zh.md)
 
-基于javacv+netty+swing技术，通过流媒体传输画面从而保证帧率稳定，目前仅支持windows操作系统，
-如果有其他操作系统使用需求可移步我另一个开源项目：https://github.com/SpringStudent/remote-desktop-control
+#### a-da (ā dà) is translated as "阿大", named after a term my son likes. It is an open-source remote desktop control system.
 
-#### 系统演示
+Built on javacv + netty + swing technology, it ensures stable frame rates through streaming media transmission. Currently,
+it only supports the Windows operating system. If you need support for other operating systems, you can check out another 
+open-source project of mine:https://github.com/SpringStudent/remote-desktop-control
+
+#### Video Demo
 
 [Bilibili Video](https://www.bilibili.com/video/BV1roDfYiEjg/)
 
 #### TODO
 
-* 粘贴板功能 (已完成)
-* 清晰度可配置
-* 流媒体分布式
+* Clipboard functionality (completed)
+* Configurable resolution
+* Distributed streaming media
