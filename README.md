@@ -6,6 +6,15 @@ Built on javacv + netty + swing technology, it ensures stable frame rates throug
 it only supports the Windows operating system. If you need support for other operating systems, you can check out another 
 open-source project of mine:https://github.com/SpringStudent/remote-desktop-control
 
+#### Module Description
+
+* transport: Transmission module, responsible for remote desktop instructions and clipboard transmission
+* stream: Streaming media module, responsible for remote desktop screen transmission
+* registry: Registry center module, acting as a service registry center (TODO)
+* protocol: Protocol module, responsible for protocol definition
+* common: Common module, responsible for the definition of common utility classes
+* client: Client module, user-oriented
+
 #### Video Demo
 
 [Bilibili Video](https://www.bilibili.com/video/BV1roDfYiEjg/)
