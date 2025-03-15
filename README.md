@@ -15,3 +15,4 @@ open-source project of mine:https://github.com/SpringStudent/remote-desktop-cont
 * Clipboard functionality (completed)
 * Configurable resolution
 * Distributed streaming media
+* Visualized streaming media management
