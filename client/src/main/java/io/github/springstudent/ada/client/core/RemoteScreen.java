@@ -208,7 +208,7 @@ public class RemoteScreen extends JFrame {
     }
 
     private void addFocusListener() {
-        addFocusListener(new FocusAdapter() {
+        canvasFrame.getCanvas().addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent ev) {
                 if (controlActivated.get()) {
