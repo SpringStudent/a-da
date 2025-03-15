@@ -86,6 +86,7 @@ public class RemoteScreen extends JFrame {
     private void initCanvasPanel() {
         this.canvasFrame = new CanvasFrame("RemoteScreen");
         canvasFrame.setVisible(false);
+        canvasFrame.getCanvas().setFocusTraversalKeysEnabled(false);
         this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
     }
 
