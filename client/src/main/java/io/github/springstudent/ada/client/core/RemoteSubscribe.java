@@ -100,6 +100,7 @@ public class RemoteSubscribe extends WebSocketClient {
             if (pipedOutputStream != null) {
                 pipedOutputStream.close();
             }
+            Log.info("RemoteSubscribe.stop end");
         } catch (Throwable e) {
             Log.error("RemoteSubscribe.stop error", e);
         }
@@ -121,13 +122,13 @@ public class RemoteSubscribe extends WebSocketClient {
         } catch (Throwable e) {
             Log.error("RemoteSubscribe.decodeFrames error", e);
         } finally {
-            Log.info("RemoteSubscribe.decodeFrames stop");
             try {
                 if (grabber != null) {
                     grabber.stop();
                 }
             } catch (Exception e) {
             }
+            Log.info("RemoteSubscribe.decodeFrames stop");
         }
     }
 
