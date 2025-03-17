@@ -27,7 +27,7 @@
  * 视频抓取参数配置
  */
 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("desktop");
-//抓取鼠标
+//抓取鼠标？
 grabber.setOption("draw_mouse", "0");
 //抓屏区域
 grabber.setOption("offset_x", "0");
