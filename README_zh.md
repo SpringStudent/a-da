@@ -18,6 +18,48 @@
 
 [Bilibili Video](https://www.bilibili.com/video/BV1roDfYiEjg/)
 
+#### Q&A
+
+抓屏参数配置RemoteGrabber.java
+
+```java
+/**
+ * 视频抓取参数配置
+ */
+FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("desktop");
+//抓取鼠标
+grabber.setOption("draw_mouse", "0");
+//抓屏区域
+grabber.setOption("offset_x", "0");
+grabber.setOption("offset_y", "0");
+//抓屏帧率
+grabber.setOption("framerate", "45");
+//抓屏自动选择硬件加速
+grabber.setOption("hwaccel", "auto");
+//设置抓屏使用的线程数。
+grabber.setOption("threads", "auto");
+//抓屏幕大小用于切换屏幕
+grabber.setOption("video_size", videoSize());
+
+/**
+ * 视频编码参数配置
+ */
+recorder = new FFmpegFrameRecorder(RemoteClient.getRemoteClient().getStreamServer() + "/receive?id=" + streamId, grabber.getImageWidth(), grabber.getImageHeight());
+recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+//视频编码格式
+recorder.setFormat("mpegts");
+//视频帧率
+recorder.setFrameRate(45);
+//视频编码的预设选项，用于控制编码速度和压缩效率之间的平衡
+recorder.setVideoOption("preset", "ultrafast");
+//视频编码的调优选项，用于控制编码速度和压缩效率之间的平衡
+recorder.setVideoOption("tune", "zerolatency");
+//视频编码的质量通常范围是0到21或更高，0是最高质量
+recorder.setVideoQuality(6);
+//设置编码时使用的线程数
+recorder.setOption("threads", "auto");
+```
+
 #### TODO
 
 * 粘贴板功能 (已完成)
