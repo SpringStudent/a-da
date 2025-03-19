@@ -64,6 +64,6 @@ recorder.setOption("threads", "auto");
 #### TODO
 
 * Clipboard functionality (completed)
+* Distributed streaming media and transmission layer (completed)
 * Configurable resolution
-* Distributed streaming media
 * Visualized streaming media management

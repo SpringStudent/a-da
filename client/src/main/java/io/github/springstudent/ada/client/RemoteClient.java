@@ -8,6 +8,7 @@ import io.github.springstudent.ada.client.netty.RemoteChannelHandler;
 import io.github.springstudent.ada.client.netty.RemoteStateIdleHandler;
 import io.github.springstudent.ada.client.utils.RemoteUtils;
 import io.github.springstudent.ada.common.log.Log;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 import io.github.springstudent.ada.protocol.cmd.Cmd;
 import io.github.springstudent.ada.protocol.cmd.CmdResCliInfo;
 import io.github.springstudent.ada.protocol.cmd.CmdType;
@@ -76,11 +77,31 @@ public class RemoteClient extends RemoteFrame {
     }
 
     private void initFromRegistryServer() {
-        this.streamServer = RemoteUtils.selectStream(this.registryServer);
-        this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
-        String nettyServer = RemoteUtils.selectNettyServer(this.clipboardServer);
-        this.serverIp = nettyServer.split(":")[0];
-        this.serverPort = Integer.parseInt(nettyServer.split(":")[1]);
+        boolean success = false;
+        int retry = 0;
+        while (!success) {
+            try {
+                if (retry > 0) {
+                    Thread.sleep(5000);
+                }
+                Log.info("initFromRegistryServer retry times =" + retry);
+                if (EmptyUtils.isEmpty(this.streamServer)) {
+                    this.streamServer = RemoteUtils.selectStream(this.registryServer);
+                }
+                if (EmptyUtils.isEmpty(this.clipboardServer)) {
+                    this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
+                }
+                if (EmptyUtils.isEmpty(serverIp) || serverIp == null) {
+                    String nettyServer = RemoteUtils.selectNettyServer(this.clipboardServer);
+                    this.serverIp = nettyServer.split(":")[0];
+                    this.serverPort = Integer.parseInt(nettyServer.split(":")[1]);
+                }
+                success = true;
+            } catch (Exception e) {
+                retry = retry + 1;
+                Log.error("initFromRegistryServer error", e);
+            }
+        }
     }
 
 
