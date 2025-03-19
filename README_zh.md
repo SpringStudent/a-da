@@ -27,7 +27,7 @@
  * 视频抓取参数配置
  */
 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("desktop");
-//抓取鼠标？
+//是否抓取鼠标？
 grabber.setOption("draw_mouse", "0");
 //抓屏区域
 grabber.setOption("offset_x", "0");
@@ -38,7 +38,7 @@ grabber.setOption("framerate", "45");
 grabber.setOption("hwaccel", "auto");
 //设置抓屏使用的线程数。
 grabber.setOption("threads", "auto");
-//抓屏幕大小用于切换屏幕
+//抓屏幕大小用
 grabber.setOption("video_size", videoSize());
 
 /**

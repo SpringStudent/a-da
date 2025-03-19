@@ -28,7 +28,7 @@ Screen capture parameter configuration RemoteGrabber.java
  * Video capture parameter configuration
  */
 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("desktop");
-// Capture mouse?
+// Whether capture mouse
 grabber.setOption("draw_mouse", "0");
 // Screen capture area
 grabber.setOption("offset_x", "0");
@@ -39,7 +39,7 @@ grabber.setOption("framerate", "45");
 grabber.setOption("hwaccel", "auto");
 // Set the number of threads used for screen capture.
 grabber.setOption("threads", "auto");
-// Screen size for screen capture to switch screens
+// Screen size for screen capture
 grabber.setOption("video_size", videoSize());
 
 /**
