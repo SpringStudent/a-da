@@ -1,4 +1,5 @@
 package io.github.springstudent.ada.common;
+
 /**
  * @author ZhouNing
  * @date 2024/12/10 14:57

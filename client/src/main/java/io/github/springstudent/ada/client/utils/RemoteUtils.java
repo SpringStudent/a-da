@@ -55,6 +55,14 @@ public class RemoteUtils {
     private static final String SAVE_CLIPBOARD = "/clipboard/save";
     private static final String GET_CLIPBOARD = "/clipboard/get";
 
+    private static final String SERVICE_STREAM = "/registry/streamInstance";
+    private static final String SERVICE_TRANSPORT = "/registry/transportInstance";
+
+    private static final String SERVICE_TRANSPORT_NETTY = "/netty/server";
+
+    private static final String SEREVICE_STREAM_ID = "stream";
+    private static final String SEREVICE_TRANSPORT_ID = "transport";
+
     /**
      * 文件分片上传
      *
@@ -233,4 +241,20 @@ public class RemoteUtils {
         }
         return roots;
     }
+
+    public static String selectStream(String registryServer) {
+        JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_STREAM).timeout(10000).execute().body());
+        return result.getStr("result") + "/" + SEREVICE_STREAM_ID;
+    }
+
+    public static String selectClipboard(String registryServer) {
+        JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_TRANSPORT).timeout(10000).execute().body());
+        return result.getStr("result") + "/" + SEREVICE_TRANSPORT_ID;
+    }
+
+    public static String selectNettyServer(String clipboardServer) {
+        JSONObject result = parseObj(HttpRequest.get(clipboardServer + SERVICE_TRANSPORT_NETTY).timeout(10000).execute().body());
+        return result.getStr("result");
+    }
+
 }

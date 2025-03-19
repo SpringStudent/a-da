@@ -6,6 +6,7 @@ import io.github.springstudent.ada.client.core.RemoteFrame;
 import io.github.springstudent.ada.client.core.RemoteScreen;
 import io.github.springstudent.ada.client.netty.RemoteChannelHandler;
 import io.github.springstudent.ada.client.netty.RemoteStateIdleHandler;
+import io.github.springstudent.ada.client.utils.RemoteUtils;
 import io.github.springstudent.ada.common.log.Log;
 import io.github.springstudent.ada.protocol.cmd.Cmd;
 import io.github.springstudent.ada.protocol.cmd.CmdResCliInfo;
@@ -42,6 +43,8 @@ public class RemoteClient extends RemoteFrame {
 
     private String streamServer;
 
+    private String registryServer;
+
     private boolean connectStatus;
 
     private RemoteScreen remoteScreen;
@@ -60,6 +63,24 @@ public class RemoteClient extends RemoteFrame {
         this.controller = new RemoteController();
         this.remoteScreen = new RemoteScreen();
         this.connectServer();
+    }
+
+    public RemoteClient(String registryServer) {
+        remoteClient = this;
+        this.registryServer = registryServer;
+        initFromRegistryServer();
+        this.controlled = new RemoteControlled();
+        this.controller = new RemoteController();
+        this.remoteScreen = new RemoteScreen();
+        this.connectServer();
+    }
+
+    private void initFromRegistryServer() {
+        this.streamServer = RemoteUtils.selectStream(this.registryServer);
+        this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
+        String nettyServer = RemoteUtils.selectNettyServer(this.clipboardServer);
+        this.serverIp = nettyServer.split(":")[0];
+        this.serverPort = Integer.parseInt(nettyServer.split(":")[1]);
     }
 
 
@@ -181,7 +202,8 @@ public class RemoteClient extends RemoteFrame {
 
 
     public static void main(String[] args) throws Exception {
-        new RemoteClient("172.16.1.37", 11112, "http://172.16.1.37:11111/transport", "http://172.16.1.37:11110/stream");
+//        new RemoteClient("172.16.1.37", 11112, "http://172.16.1.37:11111/transport", "http://172.16.1.37:11110/stream");
+        new RemoteClient("http://172.16.1.37:11113");
     }
 
 }
