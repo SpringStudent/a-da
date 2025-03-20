@@ -64,6 +64,7 @@ recorder.setOption("threads", "auto");
 
 * Clipboard functionality (completed)
 * Distributed streaming media(completed)
+* Distributed Clipboard Transfer (completed)
 * Configurable resolution
 * Visualized streaming media management
-* Distributed transport
+* Transport distribute(no plan,a lot of code change)

@@ -50,7 +50,7 @@ public class ExportServiceImpl implements ExportService {
                 }
             }
         } else {
-            return nettyServer;
+            return ExportService.buildResponseBody("success", this.nettyServer, 200);
         }
     }
 }
