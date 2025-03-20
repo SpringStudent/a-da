@@ -92,7 +92,7 @@ public class RemoteClient extends RemoteFrame {
                     this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
                 }
                 if (EmptyUtils.isEmpty(serverIp) || serverIp == null) {
-                    String nettyServer = RemoteUtils.selectNettyServer(this.clipboardServer);
+                    String nettyServer = RemoteUtils.selectNettyServer(this.registryServer);
                     this.serverIp = nettyServer.split(":")[0];
                     this.serverPort = Integer.parseInt(nettyServer.split(":")[1]);
                 }
@@ -209,12 +209,17 @@ public class RemoteClient extends RemoteFrame {
         return streamServer;
     }
 
+
     public String getStreamServerWs() {
         if (streamServer.startsWith("http")) {
             return streamServer.replace("http", "ws");
         } else {
             return streamServer.replace("https", "wss");
         }
+    }
+
+    public String getRegistryServer() {
+        return registryServer;
     }
 
     public static RemoteClient getRemoteClient() {

@@ -60,10 +60,10 @@ recorder.setVideoQuality(6);
 // Set the number of threads used for encoding
 recorder.setOption("threads", "auto");
 ``` 
-
 #### TODO
 
 * Clipboard functionality (completed)
 * Distributed streaming media(completed)
 * Configurable resolution
 * Visualized streaming media management
+* Distributed transport

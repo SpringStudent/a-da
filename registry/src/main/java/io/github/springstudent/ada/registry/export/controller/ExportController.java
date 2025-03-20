@@ -1,5 +1,6 @@
 package io.github.springstudent.ada.registry.export.controller;
 
+import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.registry.export.service.ExportService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,28 @@ public class ExportController {
 
     @GetMapping("/streamInstance")
     public String streamInstance() {
-        return exportService.getServiceInstance(ExportService.SERVICE_STREAM);
+        try {
+            return exportService.getServiceInstance(Constants.SERVICE_STREAM);
+        }catch (Exception e){
+            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+        }
     }
 
     @GetMapping("/transportInstance")
     public String transportInstance() {
-        return exportService.getServiceInstance(ExportService.SERVICE_TRANSPORT);
+        try {
+            return exportService.getServiceInstance(Constants.SERVICE_TRANSPORT);
+        }catch (Exception e){
+            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+        }
+    }
+
+    @GetMapping("/nettyInstance")
+    public String nettyInstance(){
+        try {
+            return exportService.getServiceNettyInstance();
+        } catch (Exception e) {
+            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+        }
     }
 }

@@ -66,3 +66,4 @@ recorder.setOption("threads", "auto");
 * 流媒体分布式(已完成)
 * 清晰度可配置
 * 流媒体管理可视化
+* 传输层分布式

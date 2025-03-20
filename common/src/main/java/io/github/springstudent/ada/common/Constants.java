@@ -20,5 +20,8 @@ public class Constants {
 
     public static final String CONTROLLED = "CONTROLLED";
 
+    public static final String SERVICE_STREAM = "stream";
+    public static final String SERVICE_TRANSPORT = "transport";
+    public static final String SERVICE_NETTY = "netty";
 
 }

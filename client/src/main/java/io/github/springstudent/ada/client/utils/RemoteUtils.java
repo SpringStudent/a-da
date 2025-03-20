@@ -7,6 +7,7 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.bean.FileInfo;
 import io.github.springstudent.ada.common.bean.RemoteClipboard;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
@@ -57,11 +58,9 @@ public class RemoteUtils {
 
     private static final String SERVICE_STREAM = "/registry/streamInstance";
     private static final String SERVICE_TRANSPORT = "/registry/transportInstance";
+    private static final String SERVICE_NETTY = "/registry/nettyInstance";
 
-    private static final String SERVICE_TRANSPORT_NETTY = "/netty/server";
 
-    private static final String SEREVICE_STREAM_ID = "stream";
-    private static final String SEREVICE_TRANSPORT_ID = "transport";
 
     /**
      * 文件分片上传
@@ -244,16 +243,16 @@ public class RemoteUtils {
 
     public static String selectStream(String registryServer) {
         JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_STREAM).timeout(10000).execute().body());
-        return result.getStr("result") + "/" + SEREVICE_STREAM_ID;
+        return result.getStr("result") + "/" + Constants.SERVICE_STREAM;
     }
 
     public static String selectClipboard(String registryServer) {
         JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_TRANSPORT).timeout(10000).execute().body());
-        return result.getStr("result") + "/" + SEREVICE_TRANSPORT_ID;
+        return result.getStr("result") + "/" + Constants.SERVICE_TRANSPORT;
     }
 
-    public static String selectNettyServer(String clipboardServer) {
-        JSONObject result = parseObj(HttpRequest.get(clipboardServer + SERVICE_TRANSPORT_NETTY).timeout(10000).execute().body());
+    public static String selectNettyServer(String registryServer) {
+        JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_NETTY).timeout(10000).execute().body());
         return result.getStr("result");
     }
 
