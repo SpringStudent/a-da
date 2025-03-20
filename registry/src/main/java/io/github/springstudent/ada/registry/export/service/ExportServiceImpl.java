@@ -39,7 +39,7 @@ public class ExportServiceImpl implements ExportService {
             if (instances == null || instances.isEmpty()) {
                 return ExportService.buildResponseBody("service" + Constants.SERVICE_NETTY + " not found", "", 500);
             } else {
-                String transportServer = instances.get(random.nextInt(instances.size())).getUri().toString();
+                String transportServer = instances.get(0).getUri().toString();
                 String result = HttpRequest.get(transportServer + "/" + Constants.SERVICE_TRANSPORT + "/netty/server").timeout(10000).execute().body();
                 JSONObject jsonObject = JSONUtil.parseObj(result);
                 if (jsonObject.getInt("code").intValue() == 200) {
