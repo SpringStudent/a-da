@@ -43,6 +43,7 @@ public class ExportServiceImpl implements ExportService {
                 String result = HttpRequest.get(transportServer + "/" + Constants.SERVICE_TRANSPORT + "/netty/server").timeout(10000).execute().body();
                 JSONObject jsonObject = JSONUtil.parseObj(result);
                 if (jsonObject.getInt("code").intValue() == 200) {
+                    this.nettyServer = jsonObject.getStr("result");
                     return ExportService.buildResponseBody("success", jsonObject.getStr("result"), 200);
                 } else {
                     throw new IllegalStateException(jsonObject.getStr("msg"));
