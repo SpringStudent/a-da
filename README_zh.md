@@ -28,36 +28,72 @@
  */
 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("desktop");
 //是否抓取鼠标？
-grabber.setOption("draw_mouse", "0");
+grabber.
+
+setOption("draw_mouse","0");
 //抓屏区域
-grabber.setOption("offset_x", "0");
-grabber.setOption("offset_y", "0");
+grabber.
+
+setOption("offset_x","0");
+grabber.
+
+setOption("offset_y","0");
 //抓屏帧率
-grabber.setOption("framerate", "45");
+grabber.
+
+setOption("framerate","45");
 //抓屏自动选择硬件加速
-grabber.setOption("hwaccel", "auto");
+grabber.
+
+setOption("hwaccel","auto");
 //设置抓屏使用的线程数。
-grabber.setOption("threads", "auto");
+grabber.
+
+setOption("threads","auto");
 //抓屏幕大小用
-grabber.setOption("video_size", videoSize());
+grabber.
+
+setOption("video_size",videoSize());
 
 /**
  * 视频编码参数配置
  */
-recorder = new FFmpegFrameRecorder(RemoteClient.getRemoteClient().getStreamServer() + "/receive?id=" + streamId, grabber.getImageWidth(), grabber.getImageHeight());
-recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+recorder =new
+
+FFmpegFrameRecorder(RemoteClient.getRemoteClient().
+
+getStreamServer() +"/receive?id="+streamId,grabber.
+
+getImageWidth(),grabber.
+
+getImageHeight());
+        recorder.
+
+setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
 //视频编码格式
-recorder.setFormat("mpegts");
+recorder.
+
+setFormat("mpegts");
 //视频帧率
-recorder.setFrameRate(45);
+recorder.
+
+setFrameRate(45);
 //视频编码的预设选项，用于控制编码速度和压缩效率之间的平衡
-recorder.setVideoOption("preset", "ultrafast");
+recorder.
+
+setVideoOption("preset","ultrafast");
 //视频编码的调优选项，用于控制编码速度和压缩效率之间的平衡
-recorder.setVideoOption("tune", "zerolatency");
+recorder.
+
+setVideoOption("tune","zerolatency");
 //视频编码的质量通常范围是0到21或更高，0是最高质量
-recorder.setVideoQuality(6);
+recorder.
+
+setVideoQuality(6);
 //设置编码时使用的线程数
-recorder.setOption("threads", "auto");
+recorder.
+
+setOption("threads","auto");
 ```
 
 #### TODO
@@ -72,4 +108,6 @@ recorder.setOption("threads", "auto");
 #### 碎碎念
 
 以netty的并发能力来说，支撑个上千到上万的长连接进行远程桌面指令透传是没问题的，所以传输层netty服务暂时不做分布式了，即使是做了也是为了学习，不是为了实际应用。
-以当前架构的设计，并发的短板主要还是流媒体，所以流媒体分布式是必须要做的，当然粘贴板涉及到大文件传输，所以也顺带实现了。
+以当前架构的设计，并发的短板主要还是流媒体，所以流媒体分布式是必须要做的，当然粘贴板涉及到大文件传输，分布式也是必要的，得益于流媒体和文件传输的无状态特性，
+实现起来并不麻烦，不同于netty服务是有状态的，如果要对netty服务做分布式需要依赖中心数据库比如redis或者mysql，涉及到的改动范围特别大。
+
