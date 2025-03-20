@@ -10,7 +10,7 @@ open-source project of mine:https://github.com/SpringStudent/remote-desktop-cont
 
 * transport: Transmission module, responsible for remote desktop instructions and clipboard transmission
 * stream: Streaming media module, responsible for remote desktop screen transmission
-* registry: Registry center module, acting as a service registry center (TODO)
+* registry: Registry center module, acting as a service registry center
 * protocol: Protocol module, responsible for protocol definition
 * common: Common module, responsible for the definition of common utility classes
 * client: Client module, user-oriented
