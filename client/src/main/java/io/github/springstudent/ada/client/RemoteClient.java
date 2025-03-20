@@ -228,7 +228,9 @@ public class RemoteClient extends RemoteFrame {
 
 
     public static void main(String[] args) throws Exception {
+        //不需要注册中心的单机部署
 //        new RemoteClient("172.16.1.37", 11112, "http://172.16.1.37:11111/transport", "http://172.16.1.37:11110/stream");
+        //注册中心部署
         new RemoteClient("http://172.16.1.37:11113");
     }
 
