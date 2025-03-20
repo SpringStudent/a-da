@@ -69,7 +69,7 @@ recorder.setOption("threads", "auto");
 * Visualized streaming media management
 * Transport distribute(no plan,a lot of code change)
 
-#### gosip
+#### gossip
 
 In terms of Netty's concurrency capabilities, it is no problem to support thousands to tens of thousands of long connections for remote desktop command transmission. Therefore, the Netty service at the transport layer will not be distributed for now, and even if it is, it is for learning purposes rather than practical application.
 According to the design of the current architecture, the bottleneck in concurrency mainly lies in the streaming media. Therefore, distributed streaming media is a must. Of course, since the clipboard involves large file transfers, it has also been implemented accordingly.
