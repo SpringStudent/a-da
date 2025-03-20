@@ -72,5 +72,6 @@ recorder.setOption("threads", "auto");
 #### gossip
 
 Given Netty's concurrency capabilities, it is perfectly feasible to support thousands to tens of thousands of long connections for the transmission of remote desktop commands. Therefore, the Netty service at the transport layer will not be distributed for the time being. Even if it were to be distributed, it would be for educational purposes rather than practical application.
+
 In the current architectural design, the primary bottleneck in concurrency lies with streaming media. Hence, distributing the streaming media service is essential. Naturally, since the clipboard involves the transfer of large files, distribution is also necessary for this component. Fortunately, 
 thanks to the stateless nature of both streaming media and file transfer, implementing distribution is relatively straightforward. This stands in contrast to the Netty service, which is stateful. Distributing the Netty service would require reliance on a central database such as Redis or MySQL, involving extensive modifications and complexities.
