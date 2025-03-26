@@ -20,7 +20,7 @@
 
 #### Q&A
 
-抓屏参数配置RemoteGrabber.java
+1.抓屏参数配置RemoteGrabber.java
 
 ```java
 /**
@@ -59,6 +59,11 @@ recorder.setVideoQuality(6);
 //设置编码时使用的线程数
 recorder.setOption("threads", "auto");
 ```
+
+2.通过指定javacv运行平台减少RemoteClient.jar打包大小，下面是windows上的打包命令,其他平台参考：https://github.com/bytedeco/javacpp-presets/wiki/Reducing-the-Number-of-Dependencies
+
+`mvn clean install -Djavacpp.platform=windows-x86_64`
+
 
 #### TODO
 

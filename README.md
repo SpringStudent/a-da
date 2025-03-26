@@ -60,6 +60,10 @@ recorder.setVideoQuality(6);
 // Set the number of threads used for encoding
 recorder.setOption("threads", "auto");
 ``` 
+2.The command to build the project for Windows x86_64 platform while reducing the JAR size by including only the necessary dependencies is,other platforms see:https://github.com/bytedeco/javacpp-presets/wiki/Reducing-the-Number-of-Dependencies
+
+`mvn clean install -Djavacpp.platform=windows-x86_64`
+
 #### TODO
 
 * Clipboard functionality (completed)
