@@ -128,7 +128,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public void download(String fileInfoId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         FileInfo fileInfo = fileInfoDao.queryOne(fileInfoId);
-        if (fileInfoId == null) {
+        if (fileInfo == null) {
             throw new FileException("文件不存在");
         }
         List<FileChunk> fileChunks = fileChunkDao.queryWithCriteria(new Criteria().where(FileChunk::getChunkName, fileInfo.getFileMd5()).orderBy(new Sort(FileChunk::getChunkNo, "ASC")));
