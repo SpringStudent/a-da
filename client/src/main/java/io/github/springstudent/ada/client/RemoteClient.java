@@ -36,8 +36,6 @@ import static java.lang.String.format;
 public class RemoteClient extends RemoteFrame {
     private static RemoteClient remoteClient;
 
-    public static boolean isMac =  System.getProperty("os.name").toLowerCase().charAt(0) == 'm';
-
     private String serverIp;
 
     private Integer serverPort;
@@ -59,7 +57,6 @@ public class RemoteClient extends RemoteFrame {
 
     public RemoteClient(String serverIp, Integer serverPort, String clipboardServer, String streamServer) {
         remoteClient = this;
-        setJava2dProperty();
         this.serverIp = serverIp;
         this.serverPort = serverPort;
         this.clipboardServer = clipboardServer;
@@ -72,7 +69,6 @@ public class RemoteClient extends RemoteFrame {
 
     public RemoteClient(String registryServer) {
         remoteClient = this;
-        setJava2dProperty();
         this.registryServer = registryServer;
         initFromRegistryServer();
         this.controlled = new RemoteControlled();
@@ -81,10 +77,6 @@ public class RemoteClient extends RemoteFrame {
         this.connectServer();
     }
 
-    private void setJava2dProperty() {
-        System.setProperty("sun.java2d.opengl", "true");
-        System.setProperty("sun.java2d.metal", "true");
-    }
 
     private void initFromRegistryServer() {
         boolean success = false;

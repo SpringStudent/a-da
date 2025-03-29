@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
  * @date 2024/12/9 10:53
  **/
 public abstract class RemoteFrame extends JFrame {
+    private boolean isMac;
     private JLabel titleLabel;
     private JTextField deviceCodeField;
     private JTextField passwordField;
@@ -23,10 +24,17 @@ public abstract class RemoteFrame extends JFrame {
     private JLabel closeSessionLabel;
 
     public RemoteFrame() {
+        isMac =  System.getProperty("os.name").toLowerCase().charAt(0) == 'm';
+        initJava2dProp();
         initFrame();
         initTitle();
         initPannel();
         this.setVisible(true);
+    }
+
+    private void initJava2dProp() {
+        System.setProperty("sun.java2d.opengl", "true");
+        System.setProperty("sun.java2d.metal", "true");
     }
 
     private void initFrame() {
@@ -194,4 +202,7 @@ public abstract class RemoteFrame extends JFrame {
         this.closeSessionLabel.setVisible(flag);
     }
 
+    public final boolean isMac() {
+        return isMac;
+    }
 }

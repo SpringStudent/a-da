@@ -194,7 +194,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
     }
 
     private int escapeByOsId(int keyCode) {
-        if (RemoteClient.isMac && keyCode == VK_WINDOWS) {
+        if (RemoteClient.getRemoteClient().isMac() && keyCode == VK_WINDOWS) {
             return VK_META;
         } else {
             return keyCode;
