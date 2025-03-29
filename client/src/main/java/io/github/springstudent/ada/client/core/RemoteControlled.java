@@ -27,12 +27,10 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
 
     private RemoteGrabber remoteGrabber;
 
-    private char osId;
-
     private Robot robot;
 
     public RemoteControlled() {
-        osId = System.getProperty("os.name").toLowerCase().charAt(0);
+
         this.remoteGrabber = new RemoteGrabber();
         try {
             robot = new Robot();
@@ -196,7 +194,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
     }
 
     private int escapeByOsId(int keyCode) {
-        if (osId == 'm' && keyCode == VK_WINDOWS) {
+        if (RemoteClient.isMac && keyCode == VK_WINDOWS) {
             return VK_META;
         } else {
             return keyCode;

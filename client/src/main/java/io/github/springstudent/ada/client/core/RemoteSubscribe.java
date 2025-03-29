@@ -38,8 +38,10 @@ public class RemoteSubscribe extends WebSocketClient {
         grabber.setOption("threads", "auto");
         grabber.setOption("analyzeduration", "1000000");
         grabber.setOption("probesize", "1000000");
+        grabber.setOption("framedrop", "1");
         frameConverter = new Java2DFrameConverter();
         decodeThread = new Thread(this::decodeFrames);
+        decodeThread.setPriority(Thread.MAX_PRIORITY);
         decodeThread.start();
         this.connect();
     }
@@ -116,11 +118,15 @@ public class RemoteSubscribe extends WebSocketClient {
             remoteScreen.resizeCanvas();
             remoteScreen.getControlActivated().set(true);
             while (running && !Thread.currentThread().isInterrupted()) {
-                Frame frame;
-                BufferedImage img;
-                if ((frame = grabber.grabFrame()) != null && (img = frameConverter.convert(frame)) != null) {
+                Frame frame = grabber.grabFrame();
+                if (frame == null) {
+                    continue;
+                }
+                BufferedImage img = frameConverter.convert(frame);
+                if (img != null) {
                     remoteScreen.showImg(img);
                 }
+                frame.close();
             }
         } catch (Throwable e) {
             Log.error("RemoteSubscribe.decodeFrames error", e);
