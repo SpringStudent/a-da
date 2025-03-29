@@ -25,6 +25,8 @@ public class RemoteSubscribe extends WebSocketClient {
     private Java2DFrameConverter frameConverter;
     private Thread decodeThread;
 
+    private volatile boolean running = true;
+
     public RemoteSubscribe(String serverUri) throws Exception {
         super(new URI(serverUri));
         pipedInputStream = new PipedInputStream();
@@ -91,6 +93,7 @@ public class RemoteSubscribe extends WebSocketClient {
             if (this.getConnection() != null && this.getConnection().isOpen()) {
                 this.close();
             }
+            running = false;
             if (decodeThread != null && decodeThread.isAlive()) {
                 decodeThread.interrupt();
             }
@@ -112,7 +115,7 @@ public class RemoteSubscribe extends WebSocketClient {
             RemoteScreen remoteScreen = RemoteClient.getRemoteClient().getRemoteScreen();
             remoteScreen.resizeCanvas();
             remoteScreen.getControlActivated().set(true);
-            while (!Thread.currentThread().isInterrupted()) {
+            while (running && !Thread.currentThread().isInterrupted()) {
                 Frame frame;
                 BufferedImage img;
                 if ((frame = grabber.grabFrame()) != null && (img = frameConverter.convert(frame)) != null) {
