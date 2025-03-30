@@ -2,6 +2,7 @@ package io.github.springstudent.ada.client.core;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
+import io.github.springstudent.ada.common.log.Log;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,8 +34,12 @@ public abstract class RemoteFrame extends JFrame {
     }
 
     private void initJava2dProp() {
-        System.setProperty("sun.java2d.opengl", "true");
-        System.setProperty("sun.java2d.metal", "true");
+        if(isMac){
+            System.setProperty("sun.java2d.metal", "true");
+        }else{
+            System.setProperty("sun.java2d.opengl", "true");
+        }
+        System.setProperty("sun.java2d.accthreshold", "0");
     }
 
     private void initFrame() {
