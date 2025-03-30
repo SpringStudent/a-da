@@ -25,7 +25,7 @@ public abstract class RemoteFrame extends JFrame {
     private JLabel closeSessionLabel;
 
     public RemoteFrame() {
-        isMac =  System.getProperty("os.name").toLowerCase().charAt(0) == 'm';
+        isMac = System.getProperty("os.name").toLowerCase().charAt(0) == 'm';
         initJava2dProp();
         initFrame();
         initTitle();
@@ -34,11 +34,9 @@ public abstract class RemoteFrame extends JFrame {
     }
 
     private void initJava2dProp() {
-        if(isMac){
-            System.setProperty("sun.java2d.metal", "true");
-        }else{
-            System.setProperty("sun.java2d.opengl", "true");
-        }
+        System.setProperty("sun.java2d.metal", "true");
+        System.setProperty("sun.java2d.opengl", "true");
+        System.setProperty("sun.java2d.xrender", "true");
         System.setProperty("sun.java2d.accthreshold", "0");
     }
 
