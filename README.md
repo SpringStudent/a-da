@@ -17,7 +17,7 @@ open-source project of mine:https://github.com/SpringStudent/remote-desktop-cont
 
 #### Video Demo
 
-[Bilibili Video](https://www.bilibili.com/video/BV1roDfYiEjg/)
+[Bilibili Video](https://www.bilibili.com/video/BV1q5ZCYvEJ3/)
 
 #### Q&A
 
