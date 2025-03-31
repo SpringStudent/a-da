@@ -2,9 +2,8 @@
 
 #### a-da (ā dà) is translated as "阿大", named after a term my son likes. It is an open-source remote desktop control system.
 
-Built on javacv + netty + swing technology, it ensures stable frame rates through streaming media transmission. Currently,
-it only supports the Windows operating system. If you need support for other operating systems, you can check out another 
-open-source project of mine:https://github.com/SpringStudent/remote-desktop-control
+Based on JavaCV + Netty + Swing technology, the system achieves low-latency and stable frame rates through streaming media transmission. Local tests show a latency of less than 200ms. 
+Currently, it only supports the Windows operating system. If you need support for other operating systems, please refer to my other open-source project:https://github.com/SpringStudent/remote-desktop-control
 
 #### Module Description
 
