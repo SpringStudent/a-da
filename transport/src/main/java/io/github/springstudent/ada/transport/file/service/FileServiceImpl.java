@@ -142,9 +142,9 @@ public class FileServiceImpl implements FileService {
 
             String encodeFileName = null;
             if (EmptyUtils.isNotEmpty(fileInfo.getSuffix())) {
-                URLEncoder.encode(fileInfo.getFileName() + "." + fileInfo.getSuffix(), "UTF-8");
+                encodeFileName = URLEncoder.encode(fileInfo.getFileName() + "." + fileInfo.getSuffix(), "UTF-8");
             } else {
-                URLEncoder.encode(fileInfo.getFileName(), "UTF-8");
+                encodeFileName = URLEncoder.encode(fileInfo.getFileName(), "UTF-8");
             }
             response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName);
             int pageSize = 20;
