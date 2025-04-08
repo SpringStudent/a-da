@@ -2,6 +2,8 @@ package io.github.springstudent.ada.transport.file.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.gysoft.jdbc.bean.Criteria;
+import com.gysoft.jdbc.bean.Page;
+import com.gysoft.jdbc.bean.SQL;
 import com.gysoft.jdbc.bean.Sort;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
 import io.github.springstudent.ada.transport.file.bean.FileException;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static com.gysoft.jdbc.bean.FuncBuilder.count;
 
 /**
  * @author ZhouNing
@@ -131,8 +135,8 @@ public class FileServiceImpl implements FileService {
         if (fileInfo == null) {
             throw new FileException("文件不存在");
         }
-        List<FileChunk> fileChunks = fileChunkDao.queryWithCriteria(new Criteria().where(FileChunk::getChunkName, fileInfo.getFileMd5()).orderBy(new Sort(FileChunk::getChunkNo, "ASC")));
-        if (EmptyUtils.isNotEmpty(fileChunks)) {
+        Integer chunkCount = fileChunkDao.queryIntegerWithSql(new SQL().select(count("id")).from(FileChunk.class).where(FileChunk::getChunkName, fileInfo.getFileMd5()));
+        if (chunkCount != null && chunkCount > 0) {
             response.setContentLengthLong(fileInfo.getFileSize());
             response.setContentType("application/octet-stream");
 
@@ -143,9 +147,21 @@ public class FileServiceImpl implements FileService {
                 URLEncoder.encode(fileInfo.getFileName(), "UTF-8");
             }
             response.setHeader("Content-Disposition", "attachment;filename=" + encodeFileName);
+            int pageSize = 20;
+            int pageNo = 1;
             try (OutputStream out = response.getOutputStream()) {
-                for (FileChunk fileChunk : fileChunks) {
-                    out.write(fileChunk.getChunkBlob());
+                while (true) {
+                    List<FileChunk> chunkPage = fileChunkDao.pageQueryWithCriteria(new Page(pageNo++, pageSize), new Criteria().where(FileChunk::getChunkName, fileInfo.getFileMd5()).orderBy(new Sort(FileChunk::getChunkNo, "ASC"))).getList();
+                    if (EmptyUtils.isEmpty(chunkPage)) {
+                        break;
+                    }
+                    for (FileChunk chunk : chunkPage) {
+                        byte[] bytes = chunk.getChunkBlob();
+                        if (bytes != null) {
+                            out.write(bytes);
+                        }
+                    }
+                    out.flush();
                 }
             }
         }
