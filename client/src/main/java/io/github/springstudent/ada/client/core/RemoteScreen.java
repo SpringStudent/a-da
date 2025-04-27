@@ -56,6 +56,12 @@ public class RemoteScreen extends JFrame {
 
     private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
 
+    private long frameCount = 0;
+
+    private long lastFpsUpdateTime = 0;
+
+    private double currentFps = 0d;
+
     public RemoteScreen() {
         super("远程桌面");
         listeners = RemoteClient.getRemoteClient().getController();
@@ -193,6 +199,8 @@ public class RemoteScreen extends JFrame {
         statusBar.addRamInfo();
         statusBar.addSeparator();
         statusBar.addConnectionDuration();
+        statusBar.addSeparator();
+        statusBar.addFps();
         statusBar.add(horizontalStrut);
         statusBar.add(Box.createHorizontalStrut(10));
         add(statusBar, BorderLayout.SOUTH);
@@ -297,6 +305,14 @@ public class RemoteScreen extends JFrame {
         this.captureWidth = img.getWidth();
         this.captureHeight = img.getHeight();
         this.canvasFrame.showImage(img);
+        frameCount++;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFpsUpdateTime >= 1000) {
+            currentFps = frameCount / ((currentTime - lastFpsUpdateTime) / 1000.0);
+            frameCount = 0;
+            lastFpsUpdateTime = currentTime;
+            statusBar.setFps(currentFps);
+        }
     }
 
     public void resizeCanvas() {

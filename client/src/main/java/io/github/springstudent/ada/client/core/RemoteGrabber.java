@@ -29,7 +29,7 @@ public class RemoteGrabber {
                 grabber.setOption("draw_mouse", "0");
                 grabber.setOption("offset_x", "0");
                 grabber.setOption("offset_y", "0");
-                grabber.setOption("framerate", "45");
+                grabber.setOption("framerate", "35");
                 grabber.setOption("hwaccel", "auto");
                 grabber.setOption("threads", "auto");
                 grabber.setOption("video_size", videoSize());
@@ -40,7 +40,7 @@ public class RemoteGrabber {
                 recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
 //                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
                 recorder.setFormat("mpegts");
-                recorder.setFrameRate(45);
+                recorder.setFrameRate(35);
                 recorder.setVideoOption("preset", "ultrafast");
                 recorder.setVideoOption("tune", "zerolatency");
                 recorder.setVideoQuality(8);
