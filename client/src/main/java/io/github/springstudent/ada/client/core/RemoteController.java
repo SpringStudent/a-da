@@ -40,6 +40,10 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private RemoteSubscribe remoteSubscribe;
 
+    private static String lastSelectedBitrate;
+
+    private static String lastSelectedFrameRate;
+
     public RemoteController() {
         receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
         receivedBitCounter.start(1000);
@@ -139,20 +143,27 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 panel.add(bitrateLabel);
                 ButtonGroup bitrateGroup = new ButtonGroup();
                 JRadioButton bitrate360 = new JRadioButton("360");
+                JRadioButton bitrate540 = new JRadioButton("540");
                 JRadioButton bitrate720 = new JRadioButton("720");
                 JRadioButton bitrate1M = new JRadioButton("1024");
                 JRadioButton bitrate2M = new JRadioButton("2048");
                 JRadioButton bitrate4M = new JRadioButton("4096");
+                JRadioButton bitrate6M = new JRadioButton("6144");
                 bitrateGroup.add(bitrate360);
+                bitrateGroup.add(bitrate540);
                 bitrateGroup.add(bitrate720);
                 bitrateGroup.add(bitrate1M);
                 bitrateGroup.add(bitrate2M);
                 bitrateGroup.add(bitrate4M);
+                bitrateGroup.add(bitrate6M);
                 panel.add(bitrate360);
+                panel.add(bitrate540);
                 panel.add(bitrate720);
                 panel.add(bitrate1M);
                 panel.add(bitrate2M);
                 panel.add(bitrate4M);
+                panel.add(bitrate6M);
+                setSelectedButton(bitrateGroup, lastSelectedBitrate);
                 // Frame rate selection
                 JLabel frameRateLabel = new JLabel("帧率:");
                 panel.add(frameRateLabel);
@@ -160,18 +171,22 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 JRadioButton frameRate20 = new JRadioButton("20");
                 JRadioButton frameRate25 = new JRadioButton("25");
                 JRadioButton frameRate30 = new JRadioButton("30");
+                JRadioButton frameRate35 = new JRadioButton("35");
                 JRadioButton frameRate40 = new JRadioButton("40");
                 JRadioButton frameRate45 = new JRadioButton("45");
                 frameRateGroup.add(frameRate20);
                 frameRateGroup.add(frameRate25);
                 frameRateGroup.add(frameRate30);
+                frameRateGroup.add(frameRate35);
                 frameRateGroup.add(frameRate40);
                 frameRateGroup.add(frameRate45);
                 panel.add(frameRate20);
                 panel.add(frameRate25);
                 panel.add(frameRate30);
+                panel.add(frameRate35);
                 panel.add(frameRate40);
                 panel.add(frameRate45);
+                setSelectedButton(frameRateGroup, lastSelectedFrameRate);
                 final boolean ok = DialogFactory.showOkCancel(frame, "画面设置", panel, true, () -> {
                     String selectedBitrate = getSelectedButtonText(bitrateGroup);
                     String selectedFrameRate = getSelectedButtonText(frameRateGroup);
@@ -184,13 +199,26 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                     return null;
                 });
                 if (ok) {
-                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(getSelectedButtonText(frameRateGroup)), Integer.parseInt(getSelectedButtonText(bitrateGroup)) * 1000));
+                    lastSelectedFrameRate = getSelectedButtonText(frameRateGroup);
+                    lastSelectedBitrate = getSelectedButtonText(bitrateGroup);
+                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000));
                 }
             }
         };
         configure.putValue(Action.NAME, "画面设置");
         return configure;
     }
+
+    private void setSelectedButton(ButtonGroup buttonGroup, String selectedValue) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            if (button.getText().equals(selectedValue)) {
+                button.setSelected(true);
+                break;
+            }
+        }
+    }
+
 
     private String getSelectedButtonText(ButtonGroup buttonGroup) {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements(); ) {

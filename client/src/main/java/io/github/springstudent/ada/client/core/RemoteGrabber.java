@@ -28,7 +28,7 @@ public class RemoteGrabber {
     }
 
     public void config(int cFrameRate, int cBitRate) {
-        if (frameRate != cFrameRate && bitRate != cBitRate) {
+        if (frameRate != cFrameRate || bitRate != cBitRate) {
             this.frameRate = cFrameRate;
             this.bitRate = cBitRate;
             restart = true;

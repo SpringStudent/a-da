@@ -69,7 +69,7 @@ The command to build the project for Windows x86_64 platform while reducing the 
 * Clipboard functionality (completed)
 * Distributed streaming media(completed)
 * Distributed Clipboard Transfer (completed)
-* Configurable resolution
+* Configurable resolution(completed)
 * Visualized streaming media management
 * Transport distribute(no plan,a lot of code change)
 
