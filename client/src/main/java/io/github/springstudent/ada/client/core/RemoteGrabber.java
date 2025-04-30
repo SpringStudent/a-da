@@ -17,10 +17,27 @@ import java.awt.*;
  */
 public class RemoteGrabber {
     private Thread thread;
+    private volatile boolean restart;
+    private int frameRate;
+    private int bitRate;
+
+    public RemoteGrabber() {
+        this.frameRate = 30;
+        this.bitRate = 1024 * 1000;
+        this.restart = false;
+    }
+
+    public void config(int cFrameRate, int cBitRate) {
+        if (frameRate != cFrameRate && bitRate != cBitRate) {
+            this.frameRate = cFrameRate;
+            this.bitRate = cBitRate;
+            restart = true;
+        }
+    }
 
     public void start() {
-
         thread = new Thread(() -> {
+            restart = false;
             FFmpegFrameGrabber grabber = null;
             FFmpegFrameRecorder recorder = null;
             try {
@@ -29,10 +46,11 @@ public class RemoteGrabber {
                 grabber.setOption("draw_mouse", "0");
                 grabber.setOption("offset_x", "0");
                 grabber.setOption("offset_y", "0");
-                grabber.setOption("framerate", "35");
+                grabber.setOption("framerate", String.valueOf(frameRate));
                 grabber.setOption("hwaccel", "auto");
                 grabber.setOption("threads", "auto");
                 grabber.setOption("video_size", videoSize());
+                grabber.setAudioChannels(0);
                 grabber.start();
 
                 String streamId = IdUtil.fastSimpleUUID();
@@ -40,10 +58,10 @@ public class RemoteGrabber {
                 recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
 //                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
                 recorder.setFormat("mpegts");
-                recorder.setFrameRate(35);
+                recorder.setFrameRate(frameRate);
                 recorder.setVideoOption("preset", "ultrafast");
                 recorder.setVideoOption("tune", "zerolatency");
-                recorder.setVideoQuality(8);
+                recorder.setVideoBitrate(bitRate);
                 recorder.setOption("threads", "auto");
                 recorder.start();
                 Log.info("remoteGrabber start success");
@@ -52,6 +70,10 @@ public class RemoteGrabber {
                 Frame frame;
                 while ((frame = grabber.grab()) != null && !Thread.currentThread().isInterrupted()) {
                     recorder.record(frame);
+                    if (restart) {
+                        RemoteGrabber.this.stop();
+                        RemoteGrabber.this.start();
+                    }
                 }
             } catch (Exception e) {
                 Log.error("remoteGrabber start exception", e);
@@ -76,7 +98,7 @@ public class RemoteGrabber {
         RemoteClient.getRemoteClient().getControlled().fireCmd(new CmdResStream(RemoteClient.getRemoteClient().getStreamServerWs() + "/desktop?id=" + streamId));
     }
 
-    private String videoSize(){
+    private String videoSize() {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         DisplayMode dm = ge.getDefaultScreenDevice().getDisplayMode();
         return String.format("%dx%d", dm.getWidth(), dm.getHeight());
@@ -88,4 +110,5 @@ public class RemoteGrabber {
             thread.interrupt();
         }
     }
+
 }

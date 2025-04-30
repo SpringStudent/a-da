@@ -4,15 +4,19 @@ package io.github.springstudent.ada.client.core;
 import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.client.monitor.BitCounter;
 import io.github.springstudent.ada.client.monitor.Counter;
+import io.github.springstudent.ada.client.utils.DialogFactory;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.log.Log;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 import io.github.springstudent.ada.protocol.cmd.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -109,7 +113,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 this.closeSession();
             }
         } else if (cmd.getType().equals(CmdType.ClipboardText) || cmd.getType().equals(CmdType.ClipboardTransfer)) {
-            if(needSetClipboard(cmd)){
+            if (needSetClipboard(cmd)) {
                 super.setClipboard(cmd).whenComplete((o, o2) -> RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(true));
             }
         } else if (cmd.getType().equals(CmdType.ResRemoteClipboard)) {
@@ -122,6 +126,81 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         return Constants.CONTROLLER;
     }
 
+    public Action createCaptureConfigurationAction() {
+        final Action configure = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                JFrame frame = (JFrame) SwingUtilities.getRoot(RemoteClient.getRemoteClient().getRemoteScreen());
+
+                final JPanel panel = new JPanel();
+                panel.setLayout(new GridLayout(2, 6, 15, 15));
+                JLabel bitrateLabel = new JLabel("清晰度:");
+                panel.add(bitrateLabel);
+                ButtonGroup bitrateGroup = new ButtonGroup();
+                JRadioButton bitrate360 = new JRadioButton("360");
+                JRadioButton bitrate720 = new JRadioButton("720");
+                JRadioButton bitrate1M = new JRadioButton("1024");
+                JRadioButton bitrate2M = new JRadioButton("2048");
+                JRadioButton bitrate4M = new JRadioButton("4096");
+                bitrateGroup.add(bitrate360);
+                bitrateGroup.add(bitrate720);
+                bitrateGroup.add(bitrate1M);
+                bitrateGroup.add(bitrate2M);
+                bitrateGroup.add(bitrate4M);
+                panel.add(bitrate360);
+                panel.add(bitrate720);
+                panel.add(bitrate1M);
+                panel.add(bitrate2M);
+                panel.add(bitrate4M);
+                // Frame rate selection
+                JLabel frameRateLabel = new JLabel("帧率:");
+                panel.add(frameRateLabel);
+                ButtonGroup frameRateGroup = new ButtonGroup();
+                JRadioButton frameRate20 = new JRadioButton("20");
+                JRadioButton frameRate25 = new JRadioButton("25");
+                JRadioButton frameRate30 = new JRadioButton("30");
+                JRadioButton frameRate40 = new JRadioButton("40");
+                JRadioButton frameRate45 = new JRadioButton("45");
+                frameRateGroup.add(frameRate20);
+                frameRateGroup.add(frameRate25);
+                frameRateGroup.add(frameRate30);
+                frameRateGroup.add(frameRate40);
+                frameRateGroup.add(frameRate45);
+                panel.add(frameRate20);
+                panel.add(frameRate25);
+                panel.add(frameRate30);
+                panel.add(frameRate40);
+                panel.add(frameRate45);
+                final boolean ok = DialogFactory.showOkCancel(frame, "画面设置", panel, true, () -> {
+                    String selectedBitrate = getSelectedButtonText(bitrateGroup);
+                    String selectedFrameRate = getSelectedButtonText(frameRateGroup);
+                    if (EmptyUtils.isEmpty(selectedBitrate)) {
+                        return "请选择清晰度";
+                    }
+                    if (EmptyUtils.isEmpty(selectedFrameRate)) {
+                        return "请选择帧率";
+                    }
+                    return null;
+                });
+                if (ok) {
+                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(getSelectedButtonText(frameRateGroup)), Integer.parseInt(getSelectedButtonText(bitrateGroup)) * 1000));
+                }
+            }
+        };
+        configure.putValue(Action.NAME, "画面设置");
+        return configure;
+    }
+
+    private String getSelectedButtonText(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements(); ) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+        return null;
+    }
 
     @Override
     public void onMouseMove(final int xs, final int ys) {

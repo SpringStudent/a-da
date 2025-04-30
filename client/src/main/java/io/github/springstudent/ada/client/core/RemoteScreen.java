@@ -48,6 +48,8 @@ public class RemoteScreen extends JFrame {
 
     private JToggleButton ctrlKeyToggleButton;
 
+    private JMenu optionsMenu;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
@@ -98,6 +100,10 @@ public class RemoteScreen extends JFrame {
 
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        this.optionsMenu = new JMenu("选项");
+        JMenuItem sessionConfigItem = new JMenuItem(RemoteClient.getRemoteClient().getController().createCaptureConfigurationAction());
+        this.optionsMenu.add(sessionConfigItem);
+        menuBar.add(optionsMenu);
         //发送win键
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         menuBar.add(windowsKeyToggleButton);
