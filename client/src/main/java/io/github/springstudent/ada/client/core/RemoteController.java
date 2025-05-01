@@ -40,9 +40,9 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private RemoteSubscribe remoteSubscribe;
 
-    private static String lastSelectedBitrate;
+    private String lastSelectedBitrate;
 
-    private static String lastSelectedFrameRate;
+    private String lastSelectedFrameRate;
 
     public RemoteController() {
         receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
