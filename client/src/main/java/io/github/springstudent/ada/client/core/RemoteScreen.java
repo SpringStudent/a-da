@@ -308,17 +308,19 @@ public class RemoteScreen extends JFrame {
     }
 
     public void showImg(BufferedImage img) {
-        this.captureWidth = img.getWidth();
-        this.captureHeight = img.getHeight();
-        this.canvasFrame.showImage(img);
-        frameCount++;
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastFpsUpdateTime >= 1000) {
-            currentFps = frameCount / ((currentTime - lastFpsUpdateTime) / 1000.0);
-            frameCount = 0;
-            lastFpsUpdateTime = currentTime;
-            statusBar.setFps(currentFps);
-        }
+        SwingUtilities.invokeLater(() -> {
+            this.captureWidth = img.getWidth();
+            this.captureHeight = img.getHeight();
+            this.canvasFrame.showImage(img);
+            frameCount++;
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastFpsUpdateTime >= 1000) {
+                currentFps = frameCount / ((currentTime - lastFpsUpdateTime) / 1000);
+                frameCount = 0;
+                lastFpsUpdateTime = currentTime;
+                statusBar.setFps(currentFps);
+            }
+        });
     }
 
     public void resizeCanvas() {

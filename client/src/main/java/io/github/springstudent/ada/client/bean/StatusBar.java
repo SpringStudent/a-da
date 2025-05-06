@@ -25,7 +25,7 @@ public class StatusBar extends JPanel {
 
     private final JLabel fps = new JLabel(String.format("%dfps", 0));
 
-    private final double[] fpsHistory = new double[5];
+    private final double[] fpsHistory = new double[6];
     private int historyIndex = 0;
 
     public StatusBar() {
