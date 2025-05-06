@@ -54,8 +54,8 @@ recorder.setFrameRate(45);
 recorder.setVideoOption("preset", "ultrafast");
 //视频编码的调优选项，用于控制编码速度和压缩效率之间的平衡
 recorder.setVideoOption("tune", "zerolatency");
-//视频编码的质量通常范围是0到21或更高，0是最高质量
-recorder.setVideoQuality(6);
+//视频比特率，值越高视频越清晰
+recorder.setVideoBitrate(1000000);
 //设置编码时使用的线程数
 recorder.setOption("threads", "auto");
 ```

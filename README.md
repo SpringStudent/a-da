@@ -54,8 +54,8 @@ recorder.setFrameRate(45);
 recorder.setVideoOption("preset", "ultrafast");
 // Video encoding tuning options, used to balance encoding speed and compression efficiency
 recorder.setVideoOption("tune", "zerolatency");
-// The quality of video encoding usually ranges from 0 to 21 or higher, with 0 being the highest quality
-recorder.setVideoQuality(6);
+// Video bitrate, the higher the value, the clearer the video.
+recorder.setVideoBitrate(1000000);
 // Set the number of threads used for encoding
 recorder.setOption("threads", "auto");
 ``` 
@@ -66,10 +66,10 @@ The command to build the project for Windows x86_64 platform while reducing the 
 
 #### TODO
 
-* Clipboard functionality (completed)
+* Clipboard functionality(completed)
 * Distributed streaming media(completed)
-* Distributed Clipboard Transfer (completed)
-* Configurable resolution(completed)
+* Distributed Clipboard Transfer(completed)
+* Configurable video quality(completed)
 * Visualized streaming media management
 * Transport distribute(no plan,a lot of code change)
 
