@@ -6,9 +6,10 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 /**
  * @author ZhouNing
@@ -18,6 +19,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class WsHandler extends BinaryWebSocketHandler {
 
     private Map<String, CopyOnWriteArrayList<WebSocketSession>> clients = new ConcurrentHashMap<>();
+
+    private final ScheduledExecutorService cleanupExecutor = Executors.newSingleThreadScheduledExecutor();
+
+    @PostConstruct
+    public void init() {
+        cleanupExecutor.scheduleAtFixedRate(this::cleanupEmptyLists, 1, 1, TimeUnit.MINUTES);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        cleanupExecutor.shutdown();
+    }
+
+    private void cleanupEmptyLists() {
+        clients.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {

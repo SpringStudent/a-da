@@ -109,6 +109,9 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 showMessageDialog("请先断开其他远程控制中的连接", JOptionPane.ERROR_MESSAGE);
             }
         } else if (cmd.getType().equals(CmdType.ResStream)) {
+            if (remoteSubscribe != null) {
+                remoteSubscribe.close();
+            }
             try {
                 remoteSubscribe = new RemoteSubscribe(((CmdResStream) cmd).getPlayUrl());
             } catch (Exception e) {
@@ -138,12 +141,11 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 JFrame frame = (JFrame) SwingUtilities.getRoot(RemoteClient.getRemoteClient().getRemoteScreen());
 
                 final JPanel panel = new JPanel();
-                panel.setLayout(new GridLayout(2, 10, 10, 10));
+                panel.setLayout(new GridLayout(2, 1, 10, 10));
                 JLabel bitrateLabel = new JLabel("清晰度:");
                 panel.add(bitrateLabel);
                 ButtonGroup bitrateGroup = new ButtonGroup();
                 JRadioButton bitrate360 = new JRadioButton("360");
-                JRadioButton bitrate540 = new JRadioButton("540");
                 JRadioButton bitrate720 = new JRadioButton("720");
                 JRadioButton bitrate1M = new JRadioButton("1024");
                 JRadioButton bitrate2M = new JRadioButton("2048");
@@ -151,7 +153,6 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 JRadioButton bitrate4M = new JRadioButton("4096");
                 JRadioButton bitrate6M = new JRadioButton("6144");
                 bitrateGroup.add(bitrate360);
-                bitrateGroup.add(bitrate540);
                 bitrateGroup.add(bitrate720);
                 bitrateGroup.add(bitrate1M);
                 bitrateGroup.add(bitrate2M);
@@ -159,7 +160,6 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 bitrateGroup.add(bitrate4M);
                 bitrateGroup.add(bitrate6M);
                 panel.add(bitrate360);
-                panel.add(bitrate540);
                 panel.add(bitrate720);
                 panel.add(bitrate1M);
                 panel.add(bitrate2M);
@@ -177,21 +177,18 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 JRadioButton frameRate35 = new JRadioButton("35");
                 JRadioButton frameRate40 = new JRadioButton("40");
                 JRadioButton frameRate45 = new JRadioButton("45");
-                JRadioButton frameRate60 = new JRadioButton("60");
                 frameRateGroup.add(frameRate20);
                 frameRateGroup.add(frameRate25);
                 frameRateGroup.add(frameRate30);
                 frameRateGroup.add(frameRate35);
                 frameRateGroup.add(frameRate40);
                 frameRateGroup.add(frameRate45);
-                frameRateGroup.add(frameRate60);
                 panel.add(frameRate20);
                 panel.add(frameRate25);
                 panel.add(frameRate30);
                 panel.add(frameRate35);
                 panel.add(frameRate40);
                 panel.add(frameRate45);
-                panel.add(frameRate60);
                 setSelectedButton(frameRateGroup, lastSelectedFrameRate);
                 final boolean ok = DialogFactory.showOkCancel(frame, "画面设置", panel, true, () -> {
                     String selectedBitrate = getSelectedButtonText(bitrateGroup);
