@@ -2,7 +2,7 @@
 
 #### a-da(ā dà)中译为"阿大",以我儿子喜欢的词命名的一个开源的远程桌面控制系统
 
-基于javacv+netty+swing技术，通过流媒体传输画面从而保证低延迟和稳定的帧率，本地测试延迟低于200ms，目前仅支持windows操作系统，
+支持流媒体分布式的远程桌面控制系统，基于javacv+netty+swing技术，通过流媒体传输画面从而保证低延迟和稳定的帧率，本地测试延迟低于200ms，目前仅支持windows操作系统，
 如果有其他操作系统使用需求可移步我另一个开源项目：https://github.com/SpringStudent/remote-desktop-control
 
 #### 模块说明
