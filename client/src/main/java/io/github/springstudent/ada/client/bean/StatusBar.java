@@ -6,7 +6,6 @@ import io.github.springstudent.ada.client.utils.SystemUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.TimerTask;
 
 import static java.lang.String.format;
@@ -22,11 +21,6 @@ public class StatusBar extends JPanel {
     private final JLabel message = new JLabel();
     private final JLabel sessionDuration = new JLabel("00:00:00");
     private final JLabel keyboardLayout = new JLabel();
-
-    private final JLabel fps = new JLabel(String.format("%dfps", 0));
-
-    private final double[] fpsHistory = new double[6];
-    private int historyIndex = 0;
 
     public StatusBar() {
         setLayout(new BoxLayout(this, LINE_AXIS));
@@ -53,14 +47,6 @@ public class StatusBar extends JPanel {
         this.keyboardLayout.setText(keyboardLayout);
         this.keyboardLayout.setToolTipText(format("⌨ %s", keyboardLayout));
     }
-
-    public void setFps(double fps) {
-        fpsHistory[historyIndex] = fps;
-        historyIndex = (historyIndex + 1) % fpsHistory.length;
-        Double curFps = Arrays.stream(fpsHistory).average().orElse(0);
-        this.fps.setText(String.format("%dfps", curFps.intValue()));
-    }
-
     public String getKeyboardLayout() {
         return keyboardLayout.getText();
     }
@@ -102,15 +88,6 @@ public class StatusBar extends JPanel {
         sessionDuration.setPreferredSize(dimension);
         sessionDuration.setToolTipText("会话时长");
         add(sessionDuration);
-    }
-
-    public void addFps() {
-        final Dimension dimension = new Dimension(45, HEIGHT);
-        fps.setHorizontalAlignment(RIGHT);
-        fps.setSize(dimension);
-        fps.setPreferredSize(dimension);
-        fps.setToolTipText("帧率");
-        add(fps);
     }
 
     public void addSeparator() {

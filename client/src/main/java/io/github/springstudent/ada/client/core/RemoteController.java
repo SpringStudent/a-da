@@ -4,6 +4,7 @@ package io.github.springstudent.ada.client.core;
 import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.client.monitor.BitCounter;
 import io.github.springstudent.ada.client.monitor.Counter;
+import io.github.springstudent.ada.client.monitor.FpsCounter;
 import io.github.springstudent.ada.client.utils.DialogFactory;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.log.Log;
@@ -38,6 +39,8 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private BitCounter receivedBitCounter;
 
+    private FpsCounter fpsCounter;
+
     private RemoteSubscribe remoteSubscribe;
 
     private String lastSelectedBitrate;
@@ -47,11 +50,17 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
     public RemoteController() {
         receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
         receivedBitCounter.start(1000);
-        counters = new ArrayList<>(Arrays.asList(receivedBitCounter));
+        fpsCounter = new FpsCounter("fpsCounter", "每秒画面帧数");
+        fpsCounter.start(1000);
+        counters = new ArrayList<>(Arrays.asList(fpsCounter,receivedBitCounter));
     }
 
     public BitCounter getReceivedBitCounter() {
         return receivedBitCounter;
+    }
+
+    public FpsCounter getFpsCounter() {
+        return fpsCounter;
     }
 
     public ArrayList<Counter<?>> getCounters() {
