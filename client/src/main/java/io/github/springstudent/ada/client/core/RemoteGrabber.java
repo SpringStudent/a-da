@@ -5,6 +5,7 @@ import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.common.log.Log;
 import io.github.springstudent.ada.protocol.cmd.CmdResStream;
 import org.bytedeco.ffmpeg.global.avcodec;
+import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
@@ -44,6 +45,7 @@ public class RemoteGrabber {
                 if (RemoteClient.getRemoteClient().getOsId() == 'm') {
                     grabber = new FFmpegFrameGrabber("0");
                     grabber.setFormat("avfoundation");
+                    grabber.setPixelFormat(avutil.AV_PIX_FMT_0RGB);
                 } else {
                     grabber = new FFmpegFrameGrabber("desktop");
                     grabber.setFormat("gdigrab");
