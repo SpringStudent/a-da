@@ -317,14 +317,26 @@ public class RemoteScreen extends JFrame {
         addWindowStateListener(event -> isImmutableWindowsSize.set((event.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED || (event.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
     }
 
+    private WritableImage reusableFxImage = null;
+
     public void showImg(BufferedImage img) {
         this.captureWidth = img.getWidth();
         this.captureHeight = img.getHeight();
         Platform.runLater(() -> {
-            WritableImage fxImg = SwingFXUtils.toFXImage(img, null);
+            // 复用WritableImage对象以减少GC压力
+            if (reusableFxImage == null ||
+                    reusableFxImage.getWidth() != img.getWidth() ||
+                    reusableFxImage.getHeight() != img.getHeight()) {
+                reusableFxImage = new WritableImage(img.getWidth(), img.getHeight());
+            }
+            WritableImage fxImg = SwingFXUtils.toFXImage(img, reusableFxImage);
+            // 检查是否需要更新ImageView的尺寸设置
+            if (imageView.getFitWidth() != jfxPanel.getWidth() ||
+                    imageView.getFitHeight() != jfxPanel.getHeight()) {
+                imageView.setFitWidth(jfxPanel.getWidth());
+                imageView.setFitHeight(jfxPanel.getHeight());
+            }
             imageView.setImage(fxImg);
-            imageView.setFitWidth(jfxPanel.getWidth());
-            imageView.setFitHeight(jfxPanel.getHeight());
         });
     }
 
