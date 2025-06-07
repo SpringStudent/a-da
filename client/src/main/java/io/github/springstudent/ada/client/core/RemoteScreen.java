@@ -376,7 +376,7 @@ public class RemoteScreen extends JFrame {
 
     private int scaleYPosition(int y) {
         int canvasHeight = jfxPanel.getHeight();
-        if (os == 'm') {
+        if (os == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
             return (int) Math.round(y * (captureHeight / (double) canvasHeight)) / 2;
         } else {
             return (int) Math.round(y * (captureHeight / (double) canvasHeight));
@@ -385,7 +385,7 @@ public class RemoteScreen extends JFrame {
 
     private int scaleXPosition(int x) {
         int canvasWidth = jfxPanel.getWidth();
-        if (os == 'm') {
+        if (os == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
             return (int) Math.round(x * (captureWidth / (double) canvasWidth)) / 2;
         } else {
             return (int) Math.round(x * (captureWidth / (double) canvasWidth));
