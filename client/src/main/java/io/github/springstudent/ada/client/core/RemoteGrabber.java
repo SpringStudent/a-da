@@ -43,7 +43,7 @@ public class RemoteGrabber {
             FFmpegFrameRecorder recorder = null;
             try {
                 if (RemoteClient.getRemoteClient().getOsId() == 'm') {
-                    grabber = new FFmpegFrameGrabber("0");
+                    grabber = new FFmpegFrameGrabber("1");
                     grabber.setFormat("avfoundation");
                     grabber.setPixelFormat(avutil.AV_PIX_FMT_0RGB);
                 } else {
