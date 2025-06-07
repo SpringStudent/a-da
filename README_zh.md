@@ -72,6 +72,7 @@ recorder.setOption("threads", "auto");
 * 流媒体分布式(已完成)
 * 粘贴板传输分布式(已完成)
 * 清晰度可配置(已完成)
+* 使用ImageView替换CanvasFrame
 * 流媒体管理可视化
 * 传输层分布式(改动较大，暂不做)
 
