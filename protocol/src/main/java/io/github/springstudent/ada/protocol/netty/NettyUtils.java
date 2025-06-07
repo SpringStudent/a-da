@@ -1,5 +1,6 @@
 package io.github.springstudent.ada.protocol.netty;
 
+import io.github.springstudent.ada.protocol.cmd.CmdReqCliInfo;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 
@@ -12,6 +13,7 @@ public class NettyUtils {
     private static final AttributeKey<String> ATTR_KEY_DEVICE_CODE = AttributeKey.valueOf("deviceCode");
     private static final AttributeKey<String> ATTR_KEY_CONTROLL_FLAG = AttributeKey.valueOf("controllFlag");
     private static final AttributeKey<String> ATTR_KEY_CONTROLL_DEVICECODE = AttributeKey.valueOf("contollDeviceCode");
+    private static final AttributeKey<CmdReqCliInfo> ATTR_KEY_CLI_INFO = AttributeKey.valueOf("cliInfo");
 
     public static void updateReaderTime(Channel channel, Long time) {
         channel.attr(ATTR_KEY_READER_TIME).set(time.toString());
@@ -47,6 +49,14 @@ public class NettyUtils {
 
     public static String getControllDeviceCode(Channel channel) {
         return channel.attr(ATTR_KEY_CONTROLL_DEVICECODE).get();
+    }
+
+    public static void updateCliInfo(Channel channel, CmdReqCliInfo cliInfo) {
+        channel.attr(ATTR_KEY_CLI_INFO).set(cliInfo);
+    }
+
+    public static CmdReqCliInfo getCliInfo(Channel channel) {
+        return channel.attr(ATTR_KEY_CLI_INFO).get();
     }
 }
 

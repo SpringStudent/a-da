@@ -67,6 +67,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
             case CaptureConfig:
                 list.add(CmdCaptureConfig.decode(byteBuf));
                 break;
+            case ReqCliInfo:
+                list.add(CmdReqCliInfo.decode(byteBuf));
+                break;
             default:
                 throw new IllegalArgumentException(format("unknown cmdType=%s", cmdType));
         }

@@ -115,7 +115,6 @@ public class RemoteSubscribe extends WebSocketClient {
         try {
             grabber.start();
             RemoteScreen remoteScreen = RemoteClient.getRemoteClient().getRemoteScreen();
-            remoteScreen.resizeCanvas();
             remoteScreen.getControlActivated().set(true);
             while (running && !Thread.currentThread().isInterrupted()) {
                 Frame frame = grabber.grabFrame();

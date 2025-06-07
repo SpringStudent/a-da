@@ -30,7 +30,7 @@ public class NettyChannelBrother {
         NettyUtils.updateControllDeviceCode(controller, NettyUtils.getDeviceCode(controlled));
         NettyUtils.updateControllFlag(controlled, Constants.CONTROLLED);
         NettyUtils.updateControllDeviceCode(controlled, NettyUtils.getDeviceCode(controller));
-        controller.writeAndFlush(new CmdResCapture(CmdResCapture.START));
+        controller.writeAndFlush(new CmdResCapture(CmdResCapture.START, NettyUtils.getCliInfo(controlled).getScreenNum(), NettyUtils.getCliInfo(controlled).getOsName().charAt(0)));
         controlled.writeAndFlush(new CmdResCapture(CmdResCapture.START_));
     }
 
@@ -39,7 +39,7 @@ public class NettyChannelBrother {
         NettyUtils.updateControllDeviceCode(controller, null);
         NettyUtils.updateControllFlag(controlled, null);
         NettyUtils.updateControllDeviceCode(controlled, null);
-        if(controller.isActive()){
+        if (controller.isActive()) {
             if (stopType == CmdReqCapture.STOP_CAPTURE_BY_CONTROLLED) {
                 controller.writeAndFlush(new CmdResCapture(CmdResCapture.STOP_BYCONTROLLED));
             } else if (stopType == CmdReqCapture.STOP_CAPTURE_CHANNEL_INACTIVE) {
@@ -48,7 +48,7 @@ public class NettyChannelBrother {
                 controller.writeAndFlush(new CmdResCapture(CmdResCapture.STOP));
             }
         }
-        if(controlled.isActive()){
+        if (controlled.isActive()) {
             controlled.writeAndFlush(new CmdResCapture(CmdResCapture.STOP_));
         }
     }

@@ -4,7 +4,13 @@ import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.client.bean.StatusBar;
 import io.github.springstudent.ada.client.monitor.Counter;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
-import org.bytedeco.javacv.CanvasFrame;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +40,9 @@ public class RemoteScreen extends JFrame {
 
     private int captureHeight;
 
-    private CanvasFrame canvasFrame;
+    private JFXPanel jfxPanel;
+
+    private ImageView imageView;
 
     private StatusBar statusBar;
 
@@ -50,6 +58,10 @@ public class RemoteScreen extends JFrame {
 
     private JMenu optionsMenu;
 
+    private int screenNum = 1;
+
+    private char os;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
@@ -64,6 +76,7 @@ public class RemoteScreen extends JFrame {
         counters.addAll(RemoteClient.getRemoteClient().getController().getCounters());
         initFrame();
         initCanvasPanel();
+        Platform.setImplicitExit(false);
         //allows for seeing the TAB with a regular KEY listener ...
         setFocusTraversalKeysEnabled(false);
         initMenuBar();
@@ -86,10 +99,18 @@ public class RemoteScreen extends JFrame {
     }
 
     private void initCanvasPanel() {
-        this.canvasFrame = new CanvasFrame("RemoteScreen");
-        canvasFrame.setVisible(false);
-        canvasFrame.getCanvas().setFocusTraversalKeysEnabled(false);
-        this.add(canvasFrame.getCanvas(), BorderLayout.CENTER);
+        jfxPanel = new JFXPanel();
+        add(jfxPanel, BorderLayout.CENTER);
+        imageView = new ImageView();
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
+        imageView.setFocusTraversable(true);
+        imageView.setOnMouseEntered(e -> imageView.requestFocus());
+        imageView.setPreserveRatio(false);
+        StackPane root = new StackPane(imageView);
+        Scene scene = new Scene(root);
+        jfxPanel.setScene(scene);
     }
 
     private void initMenuBar() {
@@ -216,7 +237,7 @@ public class RemoteScreen extends JFrame {
     }
 
     private void addFocusListener() {
-        canvasFrame.getCanvas().addFocusListener(new FocusAdapter() {
+        jfxPanel.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent ev) {
                 if (controlActivated.get()) {
@@ -235,7 +256,7 @@ public class RemoteScreen extends JFrame {
     }
 
     private void addMouseListeners() {
-        canvasFrame.getCanvas().addMouseListener(new MouseAdapter() {
+        jfxPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
                 if (controlActivated.get()) {
@@ -251,7 +272,7 @@ public class RemoteScreen extends JFrame {
             }
         });
 
-        canvasFrame.getCanvas().addMouseMotionListener(new MouseMotionListener() {
+        jfxPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent ev) {
                 if (controlActivated.get()) {
@@ -267,7 +288,7 @@ public class RemoteScreen extends JFrame {
             }
         });
 
-        canvasFrame.getCanvas().addMouseWheelListener(ev -> {
+        jfxPanel.addMouseWheelListener(ev -> {
             if (controlActivated.get()) {
                 fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
             }
@@ -275,7 +296,7 @@ public class RemoteScreen extends JFrame {
     }
 
     private void addKeyListeners() {
-        canvasFrame.getCanvas().addKeyListener(new KeyAdapter() {
+        jfxPanel.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent ev) {
                 if (controlActivated.get()) {
@@ -296,28 +317,20 @@ public class RemoteScreen extends JFrame {
         addWindowStateListener(event -> isImmutableWindowsSize.set((event.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED || (event.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
     }
 
-    public CanvasFrame getScreenPannel() {
-        return canvasFrame;
-    }
-
     public void showImg(BufferedImage img) {
-        SwingUtilities.invokeLater(() -> {
-            this.captureWidth = img.getWidth();
-            this.captureHeight = img.getHeight();
-            this.canvasFrame.showImage(img);
+        this.captureWidth = img.getWidth();
+        this.captureHeight = img.getHeight();
+        Platform.runLater(() -> {
+            WritableImage fxImg = SwingFXUtils.toFXImage(img, null);
+            imageView.setImage(fxImg);
+            imageView.setFitWidth(jfxPanel.getWidth());
+            imageView.setFitHeight(jfxPanel.getHeight());
         });
     }
 
-    public void resizeCanvas() {
-        if (captureWidth <= 0 || captureHeight <= 0) {
-            this.canvasFrame.setCanvasSize(getWidth(), getHeight());
-        } else {
-            this.canvasFrame.setCanvasSize(captureWidth, captureHeight);
-        }
-    }
-
-
-    public void launch() {
+    public void launch(int screenNum, char remoteOs) {
+        this.screenNum = screenNum;
+        this.os = remoteOs;
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
@@ -333,9 +346,6 @@ public class RemoteScreen extends JFrame {
     public void close() {
         if (sessionTimer != null) {
             sessionTimer.stop();
-        }
-        if (canvasFrame != null) {
-            canvasFrame.dispose();
         }
         controlActivated.set(false);
         SwingUtilities.invokeLater(() -> {
@@ -365,13 +375,21 @@ public class RemoteScreen extends JFrame {
     }
 
     private int scaleYPosition(int y) {
-        int canvasHeight = canvasFrame.getCanvas().getHeight();
-        return (int) Math.round(y * (captureHeight / (double) canvasHeight));
+        int canvasHeight = jfxPanel.getHeight();
+        if (os == 'm') {
+            return (int) Math.round(y * (captureHeight / (double) canvasHeight)) / 2;
+        } else {
+            return (int) Math.round(y * (captureHeight / (double) canvasHeight));
+        }
     }
 
     private int scaleXPosition(int x) {
-        int canvasWidth = canvasFrame.getCanvas().getWidth();
-        return (int) Math.round(x * (captureWidth / (double) canvasWidth));
+        int canvasWidth = jfxPanel.getWidth();
+        if (os == 'm') {
+            return (int) Math.round(x * (captureWidth / (double) canvasWidth)) / 2;
+        } else {
+            return (int) Math.round(x * (captureWidth / (double) canvasWidth));
+        }
     }
 
     private void fireOnKeyPressed(int keyCode, char keyChar) {

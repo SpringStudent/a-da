@@ -52,7 +52,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         receivedBitCounter.start(1000);
         fpsCounter = new FpsCounter("fpsCounter", "每秒画面帧数");
         fpsCounter.start(1000);
-        counters = new ArrayList<>(Arrays.asList(fpsCounter,receivedBitCounter));
+        counters = new ArrayList<>(Arrays.asList(fpsCounter, receivedBitCounter));
     }
 
     public BitCounter getReceivedBitCounter() {
@@ -91,7 +91,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         if (cmd.getType().equals(CmdType.ResCapture)) {
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START) {
-                RemoteClient.getRemoteClient().getRemoteScreen().launch();
+                RemoteClient.getRemoteClient().getRemoteScreen().launch(cmdResCapture.getScreenNum(), cmdResCapture.getOs());
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 if (remoteSubscribe != null) {

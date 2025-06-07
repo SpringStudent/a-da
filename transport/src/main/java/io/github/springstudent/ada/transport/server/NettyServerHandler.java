@@ -28,7 +28,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Cmd> {
         }
         log.info("server recived cmd ={}", cmd);
         NettyUtils.updateReaderTime(ctx.channel(), System.currentTimeMillis());
-        if (cmd.getType().equals(CmdType.ReqPing)) {
+        if (cmd.getType().equals(CmdType.ReqCliInfo)) {
+            CmdReqCliInfo cmdReqCliInfo = (CmdReqCliInfo) cmd;
+            NettyUtils.updateCliInfo(ctx.channel(), cmdReqCliInfo);
+        }else if (cmd.getType().equals(CmdType.ReqPing)) {
             ctx.writeAndFlush(new CmdResPong()).addListeners((ChannelFutureListener) future -> {
                 if (!future.isSuccess()) {
                     log.error("send pong error,close Channel");

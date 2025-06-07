@@ -41,8 +41,13 @@ public class RemoteGrabber {
             FFmpegFrameGrabber grabber = null;
             FFmpegFrameRecorder recorder = null;
             try {
-                grabber = new FFmpegFrameGrabber("desktop");
-                grabber.setFormat("gdigrab");
+                if (RemoteClient.getRemoteClient().getOsId() == 'm') {
+                    grabber = new FFmpegFrameGrabber("0");
+                    grabber.setFormat("avfoundation");
+                } else {
+                    grabber = new FFmpegFrameGrabber("desktop");
+                    grabber.setFormat("gdigrab");
+                }
                 grabber.setOption("draw_mouse", "0");
                 grabber.setOption("offset_x", "0");
                 grabber.setOption("offset_y", "0");
