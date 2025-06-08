@@ -47,12 +47,15 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private String lastSelectedFrameRate;
 
+    private Integer frameRateGap;
+
     public RemoteController() {
         receivedBitCounter = new BitCounter("receivedBits", "网络宽带使用量");
         receivedBitCounter.start(1000);
         fpsCounter = new FpsCounter("fpsCounter", "每秒画面帧数");
         fpsCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(fpsCounter, receivedBitCounter));
+        frameRateGap = 1000 / 30;
     }
 
     public BitCounter getReceivedBitCounter() {
@@ -213,6 +216,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 if (ok) {
                     lastSelectedFrameRate = getSelectedButtonText(frameRateGroup);
                     lastSelectedBitrate = getSelectedButtonText(bitrateGroup);
+                    frameRateGap = 1000 / (lastSelectedFrameRate == null ? 30 : Integer.parseInt(lastSelectedFrameRate));
                     RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000));
                 }
             }
@@ -221,8 +225,8 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         return configure;
     }
 
-    public Integer frameRateConvert() {
-        return 1000 / (lastSelectedFrameRate == null ? 30 : Integer.parseInt(lastSelectedFrameRate));
+    public Integer getFrameRateGap() {
+        return frameRateGap;
     }
 
     private void setSelectedButton(ButtonGroup buttonGroup, String selectedValue) {
