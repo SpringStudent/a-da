@@ -75,8 +75,12 @@ public class RemoteGrabber {
 
                 publishStream(streamId);
                 Frame frame;
-                while ((frame = grabber.grab()) != null && !Thread.currentThread().isInterrupted()) {
-                    recorder.record(frame);
+                while (!Thread.currentThread().isInterrupted()) {
+                    frame = grabber.grab();
+                    if (frame != null) {
+                        recorder.record(frame);
+                        frame.close();
+                    }
                     if (restart) {
                         RemoteGrabber.this.stop();
                         RemoteGrabber.this.start();

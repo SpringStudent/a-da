@@ -65,7 +65,6 @@ public class RemoteSubscribe extends WebSocketClient {
         try {
             byte[] bytes = byteBuffer.array();
             RemoteClient.getRemoteClient().getController().getReceivedBitCounter().add(bytes.length * 8);
-            Log.info("RemoteSubscribe.onMessage byte size =" + bytes.length);
             pipedOutputStream.write(bytes);
         } catch (Throwable e) {
             Log.error("RemoteSubscribe.onMessage error", e);
