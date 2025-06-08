@@ -132,7 +132,6 @@ public class RemoteSubscribe extends WebSocketClient {
                 BufferedImage img = frameConverter.convert(frame);
                 if (img != null) {
                     latestImage.set(img);
-
                 }
                 frame.close();
             }
@@ -157,9 +156,8 @@ public class RemoteSubscribe extends WebSocketClient {
                     if (img != null) {
                         remoteScreen.showImg(img);
                     }
-                    // 控制UI更新频率，例如每16.7ms更新一次（约60fps）
                     RemoteClient.getRemoteClient().getController().getFpsCounter().add(1);
-                    Thread.sleep(30);
+                    Thread.sleep(RemoteClient.getRemoteClient().getController().frameRateConvert());
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

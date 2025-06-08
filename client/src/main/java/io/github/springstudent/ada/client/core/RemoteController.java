@@ -221,6 +221,10 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         return configure;
     }
 
+    public Integer frameRateConvert() {
+        return 1000 / (lastSelectedFrameRate == null ? 30 : Integer.parseInt(lastSelectedFrameRate));
+    }
+
     private void setSelectedButton(ButtonGroup buttonGroup, String selectedValue) {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements(); ) {
             AbstractButton button = buttons.nextElement();
