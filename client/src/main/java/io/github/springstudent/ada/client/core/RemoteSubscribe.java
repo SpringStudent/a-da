@@ -13,6 +13,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author ZhouNing
@@ -24,6 +25,8 @@ public class RemoteSubscribe extends WebSocketClient {
     private PipedOutputStream pipedOutputStream;
     private Java2DFrameConverter frameConverter;
     private Thread decodeThread;
+    private Thread uiThread;
+    private final AtomicReference<BufferedImage> latestImage = new AtomicReference<>();
 
     private volatile boolean running = true;
 
@@ -99,6 +102,9 @@ public class RemoteSubscribe extends WebSocketClient {
             if (decodeThread != null && decodeThread.isAlive()) {
                 decodeThread.interrupt();
             }
+            if (uiThread != null && uiThread.isAlive()) {
+                uiThread.interrupt();
+            }
             if (pipedInputStream != null) {
                 pipedInputStream.close();
             }
@@ -116,6 +122,8 @@ public class RemoteSubscribe extends WebSocketClient {
             grabber.start();
             RemoteScreen remoteScreen = RemoteClient.getRemoteClient().getRemoteScreen();
             remoteScreen.getControlActivated().set(true);
+            // 启动一个单独的线程定时更新UI
+            startUIUpdateThread(remoteScreen);
             while (running && !Thread.currentThread().isInterrupted()) {
                 Frame frame = grabber.grabFrame();
                 if (frame == null) {
@@ -123,7 +131,7 @@ public class RemoteSubscribe extends WebSocketClient {
                 }
                 BufferedImage img = frameConverter.convert(frame);
                 if (img != null) {
-                    remoteScreen.showImg(img);
+                    latestImage.set(img);
                     RemoteClient.getRemoteClient().getController().getFpsCounter().add(1);
                 }
                 frame.close();
@@ -139,6 +147,25 @@ public class RemoteSubscribe extends WebSocketClient {
             }
             Log.info("RemoteSubscribe.decodeFrames stop");
         }
+    }
+
+    private void startUIUpdateThread(RemoteScreen remoteScreen) {
+        uiThread = new Thread(() -> {
+            try {
+                while (running && !Thread.currentThread().isInterrupted()) {
+                    BufferedImage img = latestImage.getAndSet(null);
+                    if (img != null) {
+                        remoteScreen.showImg(img);
+                    }
+                    // 控制UI更新频率，例如每16.7ms更新一次（约60fps）
+                    Thread.sleep(30);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        uiThread.setDaemon(true);
+        uiThread.start();
     }
 
 }

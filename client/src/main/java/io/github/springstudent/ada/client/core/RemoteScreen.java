@@ -7,6 +7,7 @@ import io.github.springstudent.ada.common.utils.EmptyUtils;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -105,6 +106,7 @@ public class RemoteScreen extends JFrame {
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
         imageView.setCache(true);
+        imageView.setCacheHint(CacheHint.SPEED);
         imageView.setFocusTraversable(true);
         imageView.setOnMouseEntered(e -> imageView.requestFocus());
         imageView.setPreserveRatio(false);
@@ -322,22 +324,20 @@ public class RemoteScreen extends JFrame {
     public void showImg(BufferedImage img) {
         this.captureWidth = img.getWidth();
         this.captureHeight = img.getHeight();
-        Platform.runLater(() -> {
-            // 复用WritableImage对象以减少GC压力
-            if (reusableFxImage == null ||
-                    reusableFxImage.getWidth() != img.getWidth() ||
-                    reusableFxImage.getHeight() != img.getHeight()) {
-                reusableFxImage = new WritableImage(img.getWidth(), img.getHeight());
-            }
-            WritableImage fxImg = SwingFXUtils.toFXImage(img, reusableFxImage);
-            // 检查是否需要更新ImageView的尺寸设置
-            if (imageView.getFitWidth() != jfxPanel.getWidth() ||
-                    imageView.getFitHeight() != jfxPanel.getHeight()) {
-                imageView.setFitWidth(jfxPanel.getWidth());
-                imageView.setFitHeight(jfxPanel.getHeight());
-            }
-            imageView.setImage(fxImg);
-        });
+        // 复用WritableImage对象以减少GC压力
+        if (reusableFxImage == null ||
+                reusableFxImage.getWidth() != img.getWidth() ||
+                reusableFxImage.getHeight() != img.getHeight()) {
+            reusableFxImage = new WritableImage(img.getWidth(), img.getHeight());
+        }
+        WritableImage fxImg = SwingFXUtils.toFXImage(img, reusableFxImage);
+        // 检查是否需要更新ImageView的尺寸设置
+        if (imageView.getFitWidth() != jfxPanel.getWidth() ||
+                imageView.getFitHeight() != jfxPanel.getHeight()) {
+            imageView.setFitWidth(jfxPanel.getWidth());
+            imageView.setFitHeight(jfxPanel.getHeight());
+        }
+        Platform.runLater(() -> imageView.setImage(fxImg));
     }
 
     public void launch(int screenNum, char remoteOs) {
