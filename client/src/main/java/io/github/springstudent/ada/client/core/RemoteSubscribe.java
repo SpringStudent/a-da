@@ -154,8 +154,8 @@ public class RemoteSubscribe extends WebSocketClient {
                     BufferedImage img = latestImage.getAndSet(null);
                     if (img != null) {
                         remoteScreen.showImg(img);
+                        RemoteClient.getRemoteClient().getController().getFpsCounter().add(1);
                     }
-                    RemoteClient.getRemoteClient().getController().getFpsCounter().add(1);
                     Thread.sleep(RemoteClient.getRemoteClient().getController().getFrameRateGap());
                 }
             } catch (InterruptedException e) {
