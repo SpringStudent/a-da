@@ -121,7 +121,7 @@ public class RemoteSubscribe extends WebSocketClient {
             grabber.start();
             RemoteScreen remoteScreen = RemoteClient.getRemoteClient().getRemoteScreen();
             remoteScreen.getControlActivated().set(true);
-            // 启动一个单独的线程定时更新UI
+            // 启动一个单独的线程定时更新UI,这么做是为了防止把grabber速度远大于UI渲染速度造成UI线程卡死
             startUIUpdateThread(remoteScreen);
             while (running && !Thread.currentThread().isInterrupted()) {
                 Frame frame = grabber.grabFrame();
