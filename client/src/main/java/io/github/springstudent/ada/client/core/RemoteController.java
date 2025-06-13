@@ -47,8 +47,6 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private String lastSelectedFrameRate;
 
-    private String lastSelectedEncoder;
-
     private Integer frameRateGap;
 
     public RemoteController() {
@@ -156,16 +154,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 final JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
                 panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                // 1. 编码器
-                JPanel encoderRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                JLabel encoderLabel = new JLabel("编码：");
-                String[] encoders = {"mpeg1video", "h264"};
-                JComboBox<String> encoderComboBox = new JComboBox<>(encoders);
-                encoderComboBox.setSelectedItem(lastSelectedEncoder != null ? lastSelectedEncoder : "mpeg1video");
-                encoderRow.add(encoderLabel);
-                encoderRow.add(encoderComboBox);
-                panel.add(encoderRow);
-                // 2. 清晰度行
+                // 1. 清晰度行
                 JPanel bitrateRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 JLabel bitrateLabel = new JLabel("画质：");
                 bitrateRow.add(bitrateLabel);
@@ -185,7 +174,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 }
                 panel.add(bitrateRow);
                 setSelectedButton(bitrateGroup, lastSelectedBitrate);
-                // 3. 帧率行
+                // 2. 帧率行
                 JPanel frameRateRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
                 JLabel frameRateLabel = new JLabel("帧率：");
                 frameRateRow.add(frameRateLabel);
@@ -207,10 +196,6 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 final boolean ok = DialogFactory.showOkCancel(frame, "画面设置", panel, true, () -> {
                     String selectedBitrate = getSelectedButtonText(bitrateGroup);
                     String selectedFrameRate = getSelectedButtonText(frameRateGroup);
-                    String selectedEncoder = (String) encoderComboBox.getSelectedItem();
-                    if(EmptyUtils.isEmpty(selectedEncoder)){
-                        return "请选择视频编码器";
-                    }
                     if (EmptyUtils.isEmpty(selectedBitrate)) {
                         return "请选择清晰度";
                     }
@@ -222,9 +207,8 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 if (ok) {
                     lastSelectedFrameRate = getSelectedButtonText(frameRateGroup);
                     lastSelectedBitrate = getSelectedButtonText(bitrateGroup);
-                    lastSelectedEncoder = (String) encoderComboBox.getSelectedItem();
                     frameRateGap = 1000 / (lastSelectedFrameRate == null ? 30 : Integer.parseInt(lastSelectedFrameRate));
-                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000, lastSelectedEncoder));
+                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000));
                 }
             }
         };
