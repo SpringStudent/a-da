@@ -191,14 +191,12 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 frameRateRow.add(frameRateLabel);
                 ButtonGroup frameRateGroup = new ButtonGroup();
                 JRadioButton[] frameRateButtons = {
-                        new JRadioButton("15"),
                         new JRadioButton("20"),
                         new JRadioButton("25"),
                         new JRadioButton("30"),
                         new JRadioButton("35"),
                         new JRadioButton("40"),
-                        new JRadioButton("45"),
-                        new JRadioButton("60")
+                        new JRadioButton("45")
                 };
                 for (JRadioButton btn : frameRateButtons) {
                     frameRateGroup.add(btn);
