@@ -47,6 +47,8 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     private String lastSelectedFrameRate;
 
+    private String lastSelectedEncoder;
+
     private Integer frameRateGap;
 
     public RemoteController() {
@@ -151,60 +153,66 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame frame = (JFrame) SwingUtilities.getRoot(RemoteClient.getRemoteClient().getRemoteScreen());
-
                 final JPanel panel = new JPanel();
-                panel.setLayout(new GridLayout(2, 1, 10, 10));
-                JLabel bitrateLabel = new JLabel("清晰度:");
-                panel.add(bitrateLabel);
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                // 1. 编码器
+                JPanel encoderRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JLabel encoderLabel = new JLabel("编码：");
+                String[] encoders = {"mpeg1video", "h264"};
+                JComboBox<String> encoderComboBox = new JComboBox<>(encoders);
+                encoderComboBox.setSelectedItem(lastSelectedEncoder != null ? lastSelectedEncoder : "mpeg1video");
+                encoderRow.add(encoderLabel);
+                encoderRow.add(encoderComboBox);
+                panel.add(encoderRow);
+                // 2. 清晰度行
+                JPanel bitrateRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JLabel bitrateLabel = new JLabel("画质：");
+                bitrateRow.add(bitrateLabel);
                 ButtonGroup bitrateGroup = new ButtonGroup();
-                JRadioButton bitrate360 = new JRadioButton("360");
-                JRadioButton bitrate720 = new JRadioButton("720");
-                JRadioButton bitrate1M = new JRadioButton("1024");
-                JRadioButton bitrate2M = new JRadioButton("2048");
-                JRadioButton bitrate3M = new JRadioButton("3072");
-                JRadioButton bitrate4M = new JRadioButton("4096");
-                JRadioButton bitrate6M = new JRadioButton("6144");
-                bitrateGroup.add(bitrate360);
-                bitrateGroup.add(bitrate720);
-                bitrateGroup.add(bitrate1M);
-                bitrateGroup.add(bitrate2M);
-                bitrateGroup.add(bitrate3M);
-                bitrateGroup.add(bitrate4M);
-                bitrateGroup.add(bitrate6M);
-                panel.add(bitrate360);
-                panel.add(bitrate720);
-                panel.add(bitrate1M);
-                panel.add(bitrate2M);
-                panel.add(bitrate3M);
-                panel.add(bitrate4M);
-                panel.add(bitrate6M);
+                JRadioButton[] bitrateButtons = {
+                        new JRadioButton("360"),
+                        new JRadioButton("720"),
+                        new JRadioButton("1024"),
+                        new JRadioButton("2048"),
+                        new JRadioButton("3072"),
+                        new JRadioButton("4096"),
+                        new JRadioButton("6144")
+                };
+                for (JRadioButton btn : bitrateButtons) {
+                    bitrateGroup.add(btn);
+                    bitrateRow.add(btn);
+                }
+                panel.add(bitrateRow);
                 setSelectedButton(bitrateGroup, lastSelectedBitrate);
-                // Frame rate selection
-                JLabel frameRateLabel = new JLabel("帧率:");
-                panel.add(frameRateLabel);
+                // 3. 帧率行
+                JPanel frameRateRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                JLabel frameRateLabel = new JLabel("帧率：");
+                frameRateRow.add(frameRateLabel);
                 ButtonGroup frameRateGroup = new ButtonGroup();
-                JRadioButton frameRate20 = new JRadioButton("20");
-                JRadioButton frameRate25 = new JRadioButton("25");
-                JRadioButton frameRate30 = new JRadioButton("30");
-                JRadioButton frameRate35 = new JRadioButton("35");
-                JRadioButton frameRate40 = new JRadioButton("40");
-                JRadioButton frameRate45 = new JRadioButton("45");
-                frameRateGroup.add(frameRate20);
-                frameRateGroup.add(frameRate25);
-                frameRateGroup.add(frameRate30);
-                frameRateGroup.add(frameRate35);
-                frameRateGroup.add(frameRate40);
-                frameRateGroup.add(frameRate45);
-                panel.add(frameRate20);
-                panel.add(frameRate25);
-                panel.add(frameRate30);
-                panel.add(frameRate35);
-                panel.add(frameRate40);
-                panel.add(frameRate45);
+                JRadioButton[] frameRateButtons = {
+                        new JRadioButton("15"),
+                        new JRadioButton("20"),
+                        new JRadioButton("25"),
+                        new JRadioButton("30"),
+                        new JRadioButton("35"),
+                        new JRadioButton("40"),
+                        new JRadioButton("45"),
+                        new JRadioButton("60")
+                };
+                for (JRadioButton btn : frameRateButtons) {
+                    frameRateGroup.add(btn);
+                    frameRateRow.add(btn);
+                }
+                panel.add(frameRateRow);
                 setSelectedButton(frameRateGroup, lastSelectedFrameRate);
                 final boolean ok = DialogFactory.showOkCancel(frame, "画面设置", panel, true, () -> {
                     String selectedBitrate = getSelectedButtonText(bitrateGroup);
                     String selectedFrameRate = getSelectedButtonText(frameRateGroup);
+                    String selectedEncoder = (String) encoderComboBox.getSelectedItem();
+                    if(EmptyUtils.isEmpty(selectedEncoder)){
+                        return "请选择视频编码器";
+                    }
                     if (EmptyUtils.isEmpty(selectedBitrate)) {
                         return "请选择清晰度";
                     }
@@ -216,8 +224,9 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 if (ok) {
                     lastSelectedFrameRate = getSelectedButtonText(frameRateGroup);
                     lastSelectedBitrate = getSelectedButtonText(bitrateGroup);
+                    lastSelectedEncoder = (String) encoderComboBox.getSelectedItem();
                     frameRateGap = 1000 / (lastSelectedFrameRate == null ? 30 : Integer.parseInt(lastSelectedFrameRate));
-                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000));
+                    RemoteController.this.fireCmd(new CmdCaptureConfig(Integer.parseInt(lastSelectedFrameRate), Integer.parseInt(lastSelectedBitrate) * 1000, lastSelectedEncoder));
                 }
             }
         };

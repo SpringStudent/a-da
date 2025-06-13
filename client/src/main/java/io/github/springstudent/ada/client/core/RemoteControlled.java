@@ -85,7 +85,7 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             }
         } else if (cmd.getType().equals(CmdType.CaptureConfig)) {
             CmdCaptureConfig cmdCaptureConfig = (CmdCaptureConfig) cmd;
-            remoteGrabber.config(cmdCaptureConfig.getFrameRate(), cmdCaptureConfig.getBitRate());
+            remoteGrabber.config(cmdCaptureConfig.getFrameRate(), cmdCaptureConfig.getBitRate(), cmdCaptureConfig.getCodec());
         }
     }
 

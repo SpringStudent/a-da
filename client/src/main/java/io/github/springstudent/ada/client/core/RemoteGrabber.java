@@ -22,16 +22,20 @@ public class RemoteGrabber {
     private int frameRate;
     private int bitRate;
 
+    private String codec;
+
     public RemoteGrabber() {
         this.frameRate = 30;
         this.bitRate = 1024 * 1000;
+        this.codec = "mpeg1video";
         this.restart = false;
     }
 
-    public void config(int cFrameRate, int cBitRate) {
-        if (frameRate != cFrameRate || bitRate != cBitRate) {
+    public void config(int cFrameRate, int cBitRate, String cCodec) {
+        if (frameRate != cFrameRate || bitRate != cBitRate|| !codec.equals(cCodec)) {
             this.frameRate = cFrameRate;
             this.bitRate = cBitRate;
+            this.codec = cCodec;
             restart = true;
         }
     }
@@ -62,14 +66,24 @@ public class RemoteGrabber {
 
                 String streamId = IdUtil.fastSimpleUUID();
                 recorder = new FFmpegFrameRecorder(RemoteClient.getRemoteClient().getStreamServer() + "/receive?id=" + streamId, grabber.getImageWidth(), grabber.getImageHeight());
-                recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
-//                recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+                if(codec.equals("mpeg1video")) {
+                    recorder.setVideoCodec(avcodec.AV_CODEC_ID_MPEG1VIDEO);
+                } else if(codec.equals("h264")) {
+                    recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+                }
                 recorder.setFormat("mpegts");
                 recorder.setFrameRate(frameRate);
                 recorder.setVideoOption("preset", "ultrafast");
                 recorder.setVideoOption("tune", "zerolatency");
                 recorder.setVideoBitrate(bitRate);
                 recorder.setOption("threads", "auto");
+                /**
+                 * 最小延迟
+                 */
+                recorder.setVideoOption("bf", "0");
+                recorder.setVideoOption("refs", "1");
+                recorder.setVideoOption("flags", "+low_delay");
+                recorder.setVideoOption("g", "25");
                 recorder.start();
                 Log.info("remoteGrabber start success");
 
@@ -79,7 +93,6 @@ public class RemoteGrabber {
                     frame = grabber.grab();
                     if (frame != null) {
                         recorder.record(frame);
-                        frame.close();
                     }
                     if (restart) {
                         RemoteGrabber.this.stop();
