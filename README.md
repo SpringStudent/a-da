@@ -71,6 +71,7 @@ The command to build the project for Windows x86_64 platform while reducing the 
 * Distributed Clipboard Transfer(completed)
 * Configurable video quality(completed)
 * Visualized streaming media management
+* Replace stream service using ZlMediaKit
 * Transport distribute(no plan,a lot of code change)
 
 #### gossip
