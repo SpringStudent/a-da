@@ -14,7 +14,7 @@ public class PushRtp {
 
     public static void main(String[] args) throws Exception {
         // 1. 配置参数（对应FFmpeg命令参数）
-        String rtpUrl = "rtp://127.0.0.1:10000"; // 推流地址
+        String rtpUrl = "rtp://127.0.0.1:30000"; // 推流地址
 
         // 编码参数（对应FFmpeg命令的编码选项）
         int frameRate = 15;                   // 对应 -r 15
@@ -29,9 +29,9 @@ public class PushRtp {
         grabber.setFrameRate(15);
 
         // 采集优化
-        grabber.setOption("draw_mouse", "0");        // 不捕获鼠标
-        grabber.setOption("show_region", "0");       // 不显示区域
-        grabber.setOption("offset_x", "0");          // 偏移优化
+        grabber.setOption("draw_mouse", "0");
+        grabber.setOption("show_region", "0");
+        grabber.setOption("offset_x", "0");
         grabber.setOption("offset_y", "0");
         grabber.setOption("hwaccel", "auto");
         grabber.setOption("threads", "auto");
