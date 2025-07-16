@@ -1,0 +1,12 @@
+SDP:
+v=0
+o=- 0 0 IN IP4 172.16.1.37
+s=No Name
+c=IN IP4 172.16.1.37
+t=0 0
+a=tool:libavformat 58.30.100
+m=video 10000 RTP/AVP 96
+b=AS:2000
+a=rtpmap:96 H264/90000
+a=fmtp:96 packetization-mode=1
+
