@@ -1,11 +1,9 @@
-import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegLogCallback;
-import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.*;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**
@@ -18,10 +16,12 @@ public class Subscribe {
     private CanvasFrame canvas;
     private Thread decodeThread;
     private volatile boolean running = true;
+    private Java2DFrameConverter frameConverter;
 
     public Subscribe(String rtpUrl) throws Exception {
+        frameConverter = new Java2DFrameConverter();
         // 创建显示窗口，标题"Remote Desktop Stream"
-        canvas = new CanvasFrame("Remote Desktop Stream", CanvasFrame.getDefaultGamma() / 2.2);
+        canvas = new CanvasFrame("Remote Desktop Stream");
         canvas.setCanvasSize(680, 480);
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -59,8 +59,8 @@ public class Subscribe {
                 if (frame == null) {
                     continue;
                 }
-                // 显示帧
-                canvas.showImage(frame);
+                BufferedImage img = frameConverter.convert(frame);
+                canvas.showImage(img);
             }
         } catch (Exception e) {
             e.printStackTrace();

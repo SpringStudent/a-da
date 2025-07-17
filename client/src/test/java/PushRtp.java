@@ -4,6 +4,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
 
+import java.awt.*;
 import java.io.FileOutputStream;
 
 /**
@@ -35,6 +36,7 @@ public class PushRtp {
         grabber.setOption("offset_y", "0");
         grabber.setOption("hwaccel", "auto");
         grabber.setOption("threads", "auto");
+        grabber.setOption("video_size", videoSize());
         // 启动采集器
         grabber.start();
 
@@ -74,5 +76,11 @@ public class PushRtp {
         grabber.stop();
         grabber.release();
         System.out.println("推流结束");
+    }
+
+    private static String videoSize() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        DisplayMode dm = ge.getDefaultScreenDevice().getDisplayMode();
+        return String.format("%dx%d", dm.getWidth(), dm.getHeight());
     }
 }
