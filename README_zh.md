@@ -73,7 +73,6 @@ recorder.setOption("threads", "auto");
 * 粘贴板传输分布式(已完成)
 * 清晰度可配置(已完成)
 * 流媒体管理可视化
-* zlmediakit替换stream
 
 #### 碎碎念
 
