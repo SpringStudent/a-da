@@ -14,6 +14,10 @@ Currently, it supports the Windows/MacOs operating system. If you need support f
 * common: Common module, responsible for the definition of common utility classes
 * client: Client module, user-oriented
 
+#### Environment
+Java 8 or higher
+Maven for dependency management
+
 #### Video Demo
 
 [Bilibili Video](https://www.bilibili.com/video/BV1q5ZCYvEJ3/)

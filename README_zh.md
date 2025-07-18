@@ -14,6 +14,10 @@
 * common: 公共模块，负责公共工具类的定义
 * client: 客户端模块，面向用户
 
+#### 运行环境
+Java 8 或更高版本
+用于依赖管理的 Maven
+
 #### 系统演示
 
 [Bilibili Video](https://www.bilibili.com/video/BV1q5ZCYvEJ3)
