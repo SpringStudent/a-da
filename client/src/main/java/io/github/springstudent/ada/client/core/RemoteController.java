@@ -168,9 +168,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                         new JRadioButton("720"),
                         new JRadioButton("1024"),
                         new JRadioButton("2048"),
-                        new JRadioButton("3072"),
                         new JRadioButton("4096"),
-                        new JRadioButton("6144")
                 };
                 for (JRadioButton btn : bitrateButtons) {
                     bitrateGroup.add(btn);
