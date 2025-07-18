@@ -9,9 +9,7 @@ import io.github.springstudent.ada.client.netty.RemoteStateIdleHandler;
 import io.github.springstudent.ada.client.utils.RemoteUtils;
 import io.github.springstudent.ada.common.log.Log;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
-import io.github.springstudent.ada.protocol.cmd.Cmd;
-import io.github.springstudent.ada.protocol.cmd.CmdResCliInfo;
-import io.github.springstudent.ada.protocol.cmd.CmdType;
+import io.github.springstudent.ada.protocol.cmd.*;
 import io.github.springstudent.ada.protocol.netty.NettyDecoder;
 import io.github.springstudent.ada.protocol.netty.NettyEncoder;
 import io.github.springstudent.ada.protocol.netty.NettyUtils;
@@ -112,12 +110,24 @@ public class RemoteClient extends RemoteFrame {
 
 
     @Override
-    public void openRemoteScreen(String deviceCode) {
-        if (!connectStatus) {
-            showMessageDialog("请等待连接连接服务器成功", JOptionPane.ERROR_MESSAGE);
-        } else {
-            controller.openSession(deviceCode);
-        }
+    public void changePassword(String deviceCode, String password) {
+        CmdChangePwd cmd = new CmdChangePwd(password);
+        controller.fireCmd(cmd);
+    }
+
+    @Override
+    public boolean isConnect() {
+        return connectStatus;
+    }
+
+    @Override
+    protected void beforeOpenRemoteScreen(String text) {
+        controller.fireCmd(new CmdReqOpen(text));
+    }
+
+    @Override
+    public void openRemoteScreen(String deviceCode, String password) {
+        controller.openSession(deviceCode, password);
     }
 
     @Override
@@ -201,6 +211,7 @@ public class RemoteClient extends RemoteFrame {
         remoteScreen.close();
         controller.stop();
         controlled.stop();
+        connectStatus = false;
         updateConnectionStatus(false);
         setControlledAndCloseSessionLabelVisible(false);
         setControllChannel(null);

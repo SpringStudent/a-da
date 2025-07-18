@@ -6,8 +6,10 @@ package io.github.springstudent.ada.protocol.cmd;
  **/
 public enum CmdType {
     ReqPing,
+    ReqOpen,
     ReqCapture,
     ReqRemoteClipboard,
+    ResOpen,
     ResCliInfo,
     ResCapture,
     ResStream,
@@ -20,6 +22,6 @@ public enum CmdType {
     MouseControl,
     ClipboardText,
     ClipboardTransfer,
-
     ReqCliInfo,
+    ChangePwd,
 }

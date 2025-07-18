@@ -80,10 +80,11 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         super.start();
     }
 
-    public void openSession(String deviceCode) {
+    public void openSession(String deviceCode, String password) {
         this.deviceCode = deviceCode;
-        fireCmd(new CmdReqCapture(deviceCode, CmdReqCapture.START_CAPTURE));
+        fireCmd(new CmdReqCapture(deviceCode, CmdReqCapture.START_CAPTURE, password));
     }
+
 
     public void closeSession() {
         fireCmd(new CmdReqCapture(deviceCode, CmdReqCapture.STOP_CAPTURE));
@@ -91,34 +92,37 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
 
     @Override
     public void handleCmd(Cmd cmd) {
-        if (cmd.getType().equals(CmdType.ResCapture)) {
+        if (cmd.getType().equals(CmdType.ResOpen)) {
+            CmdResOpen cmdResOpen = (CmdResOpen) cmd;
+            if (cmdResOpen.getCode() == CmdResOpen.OFFLINE) {
+                showMessageDialog("被控制端不在线", JOptionPane.ERROR_MESSAGE);
+            } else if (cmdResOpen.getCode() == CmdResOpen.CONTROL) {
+                showMessageDialog("请先断开其他远程控制中的连接", JOptionPane.ERROR_MESSAGE);
+            } else if (cmdResOpen.getCode() == CmdResOpen.OK) {
+                SwingUtilities.invokeLater(() -> RemoteClient.getRemoteClient().openRemoteScreen());
+            }
+        } else if (cmd.getType().equals(CmdType.ResCapture)) {
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START) {
-                RemoteClient.getRemoteClient().getRemoteScreen().launch(cmdResCapture.getScreenNum(), cmdResCapture.getOs());
+                RemoteClient.getRemoteClient().getRemoteScreen().launch(cmdResCapture.getScreenNum(),cmdResCapture.getOs());
+                start();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
-                if (remoteSubscribe != null) {
-                    remoteSubscribe.close();
-                }
                 stop();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_BYCONTROLLED) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 stop();
-                if (remoteSubscribe != null) {
-                    remoteSubscribe.close();
-                }
                 showMessageDialog("被控制端断开了连接", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_CHANNELINACTIVE) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
                 stop();
-                if (remoteSubscribe != null) {
-                    remoteSubscribe.close();
-                }
                 showMessageDialog("被控制端不在线", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.OFFLINE) {
                 showMessageDialog("被控制端不在线", JOptionPane.ERROR_MESSAGE);
             } else if (cmdResCapture.getCode() == CmdResCapture.CONTROL) {
                 showMessageDialog("请先断开其他远程控制中的连接", JOptionPane.ERROR_MESSAGE);
+            } else if (cmdResCapture.getCode() == CmdResCapture.PWDERROR) {
+                showMessageDialog("密码错误", JOptionPane.ERROR_MESSAGE);
             }
         } else if (cmd.getType().equals(CmdType.ResStream)) {
             if (remoteSubscribe != null) {

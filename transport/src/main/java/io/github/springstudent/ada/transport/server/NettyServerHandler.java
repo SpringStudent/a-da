@@ -1,12 +1,17 @@
 package io.github.springstudent.ada.transport.server;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 import io.github.springstudent.ada.protocol.cmd.*;
 import io.github.springstudent.ada.protocol.netty.NettyUtils;
 import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ZhouNing
@@ -28,16 +33,33 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Cmd> {
         }
         log.info("server recived cmd ={}", cmd);
         NettyUtils.updateReaderTime(ctx.channel(), System.currentTimeMillis());
-        if (cmd.getType().equals(CmdType.ReqCliInfo)) {
+        if (cmd.getType().equals(CmdType.ChangePwd)) {
+            CmdChangePwd cmdChangePwd = (CmdChangePwd) cmd;
+            Map<String, Object> map = new HashMap();
+            map.put("password", cmdChangePwd.getPassword());
+            NettyUtils.updateCliInfo(ctx.channel(), map);
+        } else if (cmd.getType().equals(CmdType.ReqCliInfo)) {
             CmdReqCliInfo cmdReqCliInfo = (CmdReqCliInfo) cmd;
-            NettyUtils.updateCliInfo(ctx.channel(), cmdReqCliInfo);
-        }else if (cmd.getType().equals(CmdType.ReqPing)) {
+            NettyUtils.updateCliInfo(ctx.channel(), BeanUtil.beanToMap(cmdReqCliInfo));
+        } else if (cmd.getType().equals(CmdType.ReqPing)) {
             ctx.writeAndFlush(new CmdResPong()).addListeners((ChannelFutureListener) future -> {
                 if (!future.isSuccess()) {
                     log.error("send pong error,close Channel");
                     future.channel().close();
                 }
             });
+        } else if (cmd.getType().equals(CmdType.ReqOpen)) {
+            CmdReqOpen cmdReqOpen = (CmdReqOpen) cmd;
+            Channel controlledChannel = NettyChannelManager.getChannel(cmdReqOpen.getDeviceCode());
+            if (controlledChannel == null) {
+                ctx.channel().writeAndFlush(new CmdResOpen(CmdResOpen.OFFLINE));
+            } else {
+                if (StrUtil.isEmpty(NettyUtils.getControllFlag(ctx.channel())) && StrUtil.isEmpty(NettyUtils.getControllFlag(controlledChannel))) {
+                    ctx.channel().writeAndFlush(new CmdResOpen(CmdResOpen.OK));
+                } else {
+                    ctx.channel().writeAndFlush(new CmdResOpen(CmdResOpen.CONTROL));
+                }
+            }
         } else if (cmd.getType().equals(CmdType.ReqCapture)) {
             CmdReqCapture cmdReqCapture = (CmdReqCapture) cmd;
             Channel controlledChannel = NettyChannelManager.getChannel(cmdReqCapture.getDeviceCode());
@@ -47,7 +69,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Cmd> {
                     ctx.channel().writeAndFlush(new CmdResCapture(CmdResCapture.OFFLINE));
                 } else {
                     if (StrUtil.isEmpty(NettyUtils.getControllFlag(ctx.channel())) && StrUtil.isEmpty(NettyUtils.getControllFlag(controlledChannel))) {
-                        NettyChannelManager.bindChannelBrother(ctx.channel(), controlledChannel);
+                        if (EmptyUtils.isEmpty(cmdReqCapture.getPassword()) || !cmdReqCapture.getPassword().equals(NettyUtils.getCliInfo(controlledChannel).get("password").toString())) {
+                            ctx.channel().writeAndFlush(new CmdResCapture(CmdResCapture.PWDERROR));
+                        } else {
+                            NettyChannelManager.bindChannelBrother(ctx.channel(), controlledChannel);
+                        }
                     } else {
                         //控制端正在被控制发起其他远程控制，提示“请先断开其他远程控制中的连接”
                         ctx.channel().writeAndFlush(new CmdResCapture(CmdResCapture.CONTROL));
@@ -95,9 +121,13 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Cmd> {
         while (NettyChannelManager.getChannel(deviceCode) != null) {
             deviceCode = RandomUtil.randomString(8);
         }
+        String password = RandomUtil.randomString(6);
         NettyUtils.updateDeviceCode(ctx.channel(), deviceCode);
         NettyChannelManager.addChannel(deviceCode, ctx.channel());
-        ctx.channel().writeAndFlush(new CmdResCliInfo(deviceCode, "111111"));
+        Map<String, Object> map = new HashMap();
+        map.put("password", password);
+        NettyUtils.updateCliInfo(ctx.channel(), map);
+        ctx.channel().writeAndFlush(new CmdResCliInfo(deviceCode, password));
     }
 
     @Override

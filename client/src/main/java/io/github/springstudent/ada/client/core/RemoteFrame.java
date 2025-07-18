@@ -3,9 +3,11 @@ package io.github.springstudent.ada.client.core;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import io.github.springstudent.ada.common.log.Log;
+import io.github.springstudent.ada.common.utils.EmptyUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -120,9 +122,48 @@ public abstract class RemoteFrame extends JFrame {
         gbc.gridx = 2;
         topPanel.add(new JLabel("临时密码:"), gbc);
         gbc.gridx = 3;
+        JPanel passwordPanel = new JPanel(new BorderLayout());
         this.passwordField = new JTextField(10);
         passwordField.setText("");
-        topPanel.add(passwordField, gbc);
+        passwordField.setEditable(false);
+        passwordField.setDocument(new PlainDocument() {
+            @Override
+            public void insertString(int offs, String str, javax.swing.text.AttributeSet a) throws javax.swing.text.BadLocationException {
+                if (str != null && ReUtil.isMatch("^[a-zA-Z0-9]+$", str)) {
+                    super.insertString(offs, str, a);
+                } else {
+                    showMessageDialog("密码只能为数字与字母的组合", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        JButton editButton = new JButton("✎");
+        editButton.setMargin(new Insets(0, 2, 0, 2));
+        editButton.setFocusPainted(false);
+        editButton.setBorder(BorderFactory.createEmptyBorder());
+        editButton.setContentAreaFilled(false);
+        editButton.addActionListener(e -> {
+            if (isConnect()) {
+                passwordField.setEditable(true);
+                passwordField.requestFocusInWindow();
+            } else {
+                showMessageDialog("请等待连接连接服务器成功", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        passwordField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (EmptyUtils.isEmpty(passwordField.getText())) {
+                    showMessageDialog("密码不能为空", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    passwordField.setEditable(false);
+                    passwordField.transferFocus();
+                    changePassword(deviceCodeField.getText(), passwordField.getText());
+                }
+            }
+        });
+        passwordPanel.add(editButton, BorderLayout.EAST);
+        topPanel.add(passwordPanel, gbc);
 
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         bottomPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
@@ -133,7 +174,7 @@ public abstract class RemoteFrame extends JFrame {
         gbc.weighty = 1.0;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        bottomPanel.add(new JLabel("远程控制设备:"), gbc);
+        bottomPanel.add(new JLabel("远程设备代码:"), gbc);
         gbc.gridx = 1;
         this.remoteDeviceField = new JTextField(15);
         bottomPanel.add(remoteDeviceField, gbc);
@@ -144,11 +185,15 @@ public abstract class RemoteFrame extends JFrame {
             if (StrUtil.isEmpty(remoteDeviceField.getText())) {
                 showMessageDialog("请输入远程设备代码", JOptionPane.ERROR_MESSAGE);
             } else if (remoteDeviceField.getText().equals(deviceCodeField.getText())) {
-                showMessageDialog("远程控制设备代码不能为自己", JOptionPane.ERROR_MESSAGE);
+                showMessageDialog("远程设备代码不能为自己", JOptionPane.ERROR_MESSAGE);
             } else if (!ReUtil.isMatch("^[a-zA-Z0-9]+$", remoteDeviceField.getText())) {
-                showMessageDialog("远程控制设备代码只能为数字与字母的组合", JOptionPane.ERROR_MESSAGE);
+                showMessageDialog("远程设备代码只能为数字与字母的组合", JOptionPane.ERROR_MESSAGE);
             } else {
-                openRemoteScreen(remoteDeviceField.getText());
+                if (!isConnect()) {
+                    showMessageDialog("请等待连接连接服务器成功", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    beforeOpenRemoteScreen(remoteDeviceField.getText());
+                }
             }
         });
         bottomPanel.add(connectButton, gbc);
@@ -172,16 +217,42 @@ public abstract class RemoteFrame extends JFrame {
         closeSessionLabel.setVisible(false);
         bottomPanel.add(closeSessionLabel, gbc);
         mainPanel.add(topPanel);
-        mainPanel.add(Box.createVerticalStrut(5)); // 间距
+        mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(bottomPanel);
         this.add(mainPanel, BorderLayout.CENTER);
+        this.getContentPane().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                Component comp = getContentPane().getComponentAt(e.getPoint());
+                if (!(comp instanceof JTextField)) {
+                    // 如果点击的不是文本框，则将焦点设置到内容面板上
+                    getContentPane().requestFocusInWindow();
+                }
+            }
+        });
     }
 
-    public void showMessageDialog(Object msg, int messageType) {
-        JOptionPane.showMessageDialog(this, msg, "提示", messageType);
+    public abstract void changePassword(String deviceCode, String password);
+
+    protected abstract void beforeOpenRemoteScreen(String text);
+
+    public final void openRemoteScreen() {
+        String password = JOptionPane.showInputDialog(
+                this,
+                "请输入远程设备密码：",
+                "输入密码",
+                JOptionPane.PLAIN_MESSAGE
+        );
+        if (password != null && !password.trim().isEmpty()) {
+            openRemoteScreen(remoteDeviceField.getText(), password.trim());
+        } else if (password != null) {
+            showMessageDialog("密码不能为空", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    public abstract void openRemoteScreen(String remoteName);
+    public abstract boolean isConnect();
+
+    public abstract void openRemoteScreen(String deviceCode, String password);
 
     public abstract void closeRemoteScreen();
 
@@ -197,12 +268,17 @@ public abstract class RemoteFrame extends JFrame {
             titleLabel.setText("<html>远程桌面控制<span style='color:blue;'>（已就绪）</span></html>");
         } else {
             titleLabel.setText("<html>远程桌面控制<span style='color:red;'>（连接中）</span></html>");
+            passwordField.setEditable(false);
         }
     }
 
     public final void setControlledAndCloseSessionLabelVisible(boolean flag) {
         this.controlledLabel.setVisible(flag);
         this.closeSessionLabel.setVisible(flag);
+    }
+
+    public void showMessageDialog(Object msg, int messageType) {
+        JOptionPane.showMessageDialog(this, msg, "提示", messageType);
     }
 
     public final boolean isMac() {

@@ -1,5 +1,6 @@
 package io.github.springstudent.ada.transport.server;
 
+import cn.hutool.core.map.MapUtil;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.protocol.cmd.CmdReqCapture;
 import io.github.springstudent.ada.protocol.cmd.CmdResCapture;
@@ -30,7 +31,7 @@ public class NettyChannelBrother {
         NettyUtils.updateControllDeviceCode(controller, NettyUtils.getDeviceCode(controlled));
         NettyUtils.updateControllFlag(controlled, Constants.CONTROLLED);
         NettyUtils.updateControllDeviceCode(controlled, NettyUtils.getDeviceCode(controller));
-        controller.writeAndFlush(new CmdResCapture(CmdResCapture.START, NettyUtils.getCliInfo(controlled).getScreenNum(), NettyUtils.getCliInfo(controlled).getOsName().toLowerCase().charAt(0)));
+        controller.writeAndFlush(new CmdResCapture(CmdResCapture.START, MapUtil.getInt(NettyUtils.getCliInfo(controlled), "screenNum", 0), MapUtil.getStr(NettyUtils.getCliInfo(controlled), "osName", "windows").toLowerCase().charAt(0)));
         controlled.writeAndFlush(new CmdResCapture(CmdResCapture.START_));
     }
 
