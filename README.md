@@ -15,8 +15,8 @@ Currently, it supports the Windows/MacOs operating system. If you need support f
 * client: Client module, user-oriented
 
 #### Environment
-Java 8 or higher
-Maven for dependency management
+* Java 8 or higher
+* Maven for dependency management
 
 #### Video Demo
 
