@@ -36,12 +36,14 @@ public class NettyServer implements InitializingBean, DisposableBean {
      * 连接通道
      */
     private Channel channel;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         ServerBootstrap bootstrap = new ServerBootstrap();
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1, new NamedThreadFactory("netty-boss-", true));
-        EventLoopGroup workerGroup = new NioEventLoopGroup(10, new NamedThreadFactory("netty-worker-", true));
+        bossGroup = new NioEventLoopGroup(1, new NamedThreadFactory("netty-boss-", true));
+        workerGroup = new NioEventLoopGroup(10, new NamedThreadFactory("netty-worker-", true));
         bootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_REUSEADDR, true)
@@ -63,9 +65,28 @@ public class NettyServer implements InitializingBean, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        if (channel != null && channel.isActive()) {
-            channel.close();
-            logger.info("server stop success");
+        try {
+            if (channel != null) {
+                channel.close().sync();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("Interrupted while closing channel", e);
+        } finally {
+            shutdownEventLoopGroup(bossGroup, "bossGroup");
+            shutdownEventLoopGroup(workerGroup, "workerGroup");
+        }
+    }
+
+    private void shutdownEventLoopGroup(EventLoopGroup group, String name) {
+        if (group != null) {
+            try {
+                group.shutdownGracefully().sync();
+                logger.info("{} shutdown successfully", name);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.error("Interrupted while shutting down {}", name, e);
+            }
         }
     }
 
