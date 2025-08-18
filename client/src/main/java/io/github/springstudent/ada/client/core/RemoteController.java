@@ -104,7 +104,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         } else if (cmd.getType().equals(CmdType.ResCapture)) {
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START) {
-                RemoteClient.getRemoteClient().getRemoteScreen().launch(cmdResCapture.getScreenNum(),cmdResCapture.getOs());
+                RemoteClient.getRemoteClient().getRemoteScreen().launch(cmdResCapture.getScreenNum(), cmdResCapture.getOs());
                 start();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP) {
                 RemoteClient.getRemoteClient().getRemoteScreen().close();
@@ -319,7 +319,11 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         final Action getRemoteClipboard = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                requireRemoteClipboard();
+                if (EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())) {
+                    requireRemoteClipboard();
+                } else {
+                    RemoteController.this.showMessageDialog("暂无可用transport服务，无法发送/获取粘贴板", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
         getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, "获取远程粘贴板");
@@ -336,14 +340,14 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         final Action setRemoteClipboard = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if(EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())){
+                if (EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())) {
                     RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(false);
                     RemoteController.this.sendClipboard().whenComplete((aByte, throwable) -> {
                         if (throwable != null || aByte != CmdResRemoteClipboard.OK) {
                             RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(true);
                         }
                     });
-                }else{
+                } else {
                     RemoteController.this.showMessageDialog("暂无可用transport服务，无法发送/获取粘贴板", JOptionPane.ERROR_MESSAGE);
                 }
             }

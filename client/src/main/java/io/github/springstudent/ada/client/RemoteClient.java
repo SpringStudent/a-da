@@ -128,7 +128,12 @@ public class RemoteClient extends RemoteFrame {
 
     @Override
     public void openRemoteScreen(String deviceCode, String password) {
-        controller.openSession(deviceCode, password);
+        if(EmptyUtils.isNotEmpty(this.streamServer)){
+            controller.openSession(deviceCode, password);
+        }else{
+            showMessageDialog("暂无可用stream服务，无法发起远程桌面", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     @Override

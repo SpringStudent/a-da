@@ -3,10 +3,8 @@ package io.github.springstudent.ada.client.core;
 import io.github.springstudent.ada.client.RemoteClient;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.log.Log;
-import io.github.springstudent.ada.common.utils.EmptyUtils;
 import io.github.springstudent.ada.protocol.cmd.*;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.io.File;
@@ -62,12 +60,8 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
             CmdResCapture cmdResCapture = (CmdResCapture) cmd;
             if (cmdResCapture.getCode() == CmdResCapture.START_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(true);
-                if (EmptyUtils.isEmpty(RemoteClient.getRemoteClient().getStreamServer())) {
-                    showMessageDialog("暂无可用stream服务，无法发起远程控制", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    remoteGrabber.start();
-                    start();
-                }
+                remoteGrabber.start();
+                start();
             } else if (cmdResCapture.getCode() == CmdResCapture.STOP_) {
                 RemoteClient.getRemoteClient().setControlledAndCloseSessionLabelVisible(false);
                 remoteGrabber.stop();
@@ -78,15 +72,11 @@ public class RemoteControlled extends RemoteControll implements RemoteScreenRobo
         } else if (cmd.getType().equals(CmdType.MouseControl)) {
             this.handleMessage((CmdMouseControl) cmd);
         } else if (cmd.getType().equals(CmdType.ReqRemoteClipboard)) {
-            if(EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())){
-                super.sendClipboard().whenComplete((aByte, throwable) -> {
-                    if (throwable != null || aByte != CmdResRemoteClipboard.OK) {
-                        fireCmd(new CmdResRemoteClipboard());
-                    }
-                });
-            }else{
-                showMessageDialog("暂无可用transport服务，无法发送/获取粘贴板", JOptionPane.ERROR_MESSAGE);
-            }
+            super.sendClipboard().whenComplete((aByte, throwable) -> {
+                if (throwable != null || aByte != CmdResRemoteClipboard.OK) {
+                    fireCmd(new CmdResRemoteClipboard());
+                }
+            });
         } else if (cmd.getType().equals(CmdType.ClipboardText) || cmd.getType().equals(CmdType.ClipboardTransfer)) {
             if (needSetClipboard(cmd)) {
                 super.setClipboard(cmd).whenComplete((o, o2) -> {
