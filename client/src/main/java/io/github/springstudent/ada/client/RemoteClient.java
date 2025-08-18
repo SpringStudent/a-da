@@ -198,10 +198,18 @@ public class RemoteClient extends RemoteFrame {
             updateConnectionStatus(true);
         } else if (cmd.getType().equals(CmdType.EurekaServiceChange)) {
             CmdEurekaServiceChange serviceChange = (CmdEurekaServiceChange) cmd;
-            if(serviceChange.getServiceName().equals(Constants.SERVICE_STREAM)){
-                this.streamServer = RemoteUtils.selectStream(this.registryServer);
-            }else if(serviceChange.getServiceName().equals(Constants.SERVICE_TRANSPORT)) {
-                this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
+            if (serviceChange.getServiceName().equals(Constants.SERVICE_STREAM)) {
+                try {
+                    this.streamServer = RemoteUtils.selectStream(this.registryServer);
+                } catch (Exception e) {
+                    this.streamServer = null;
+                }
+            } else if (serviceChange.getServiceName().equals(Constants.SERVICE_TRANSPORT)) {
+                try {
+                    this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
+                } catch (Exception e) {
+                    this.clipboardServer = null;
+                }
             }
         } else {
             controller.handleCmd(cmd);
