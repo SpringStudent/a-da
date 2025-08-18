@@ -336,12 +336,16 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
         final Action setRemoteClipboard = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(false);
-                RemoteController.this.sendClipboard().whenComplete((aByte, throwable) -> {
-                    if (throwable != null || aByte != CmdResRemoteClipboard.OK) {
-                        RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(true);
-                    }
-                });
+                if(EmptyUtils.isNotEmpty(RemoteClient.getRemoteClient().getClipboardServer())){
+                    RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(false);
+                    RemoteController.this.sendClipboard().whenComplete((aByte, throwable) -> {
+                        if (throwable != null || aByte != CmdResRemoteClipboard.OK) {
+                            RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(true);
+                        }
+                    });
+                }else{
+                    RemoteController.this.showMessageDialog("暂无可用transport服务，无法发送/获取粘贴板", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
         setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, "发送本机粘贴板");
