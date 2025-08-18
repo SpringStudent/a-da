@@ -81,7 +81,7 @@ public class Subscribe {
     }
 
     public static void main(String[] args) throws Exception {
-        String rtpUrl = "rtp://172.16.1.37:10000";
+        String rtpUrl = "rtp://192.168.0.110:10000";
         FFmpegLogCallback.set();
         new Subscribe(rtpUrl);
     }

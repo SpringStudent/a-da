@@ -23,5 +23,7 @@ public class Constants {
     public static final String SERVICE_STREAM = "stream";
     public static final String SERVICE_TRANSPORT = "transport";
     public static final String SERVICE_NETTY = "netty";
+    public static final Integer SERVICE_EVENT_ONLINE = 0;
+    public static final Integer SERVICE_EVENT_OFFLINE = 1;
 
 }

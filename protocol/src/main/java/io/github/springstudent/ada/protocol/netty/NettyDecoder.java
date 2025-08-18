@@ -79,6 +79,9 @@ public class NettyDecoder extends ByteToMessageDecoder {
             case ResOpen:
                 list.add(CmdResOpen.decode(byteBuf));
                 break;
+            case EurekaServiceChange:
+                list.add(CmdEurekaServiceChange.decode(byteBuf));
+                break;
             default:
                 throw new IllegalArgumentException(format("unknown cmdType=%s", cmdType));
         }

@@ -7,6 +7,7 @@ import io.github.springstudent.ada.protocol.cmd.CmdReqCapture;
 import io.github.springstudent.ada.protocol.netty.NettyUtils;
 import io.netty.channel.Channel;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -76,5 +77,7 @@ public class NettyChannelManager {
         return null;
     }
 
-
+    public static Collection<Channel> getAllChannels() {
+        return deviceCodeChannelMap.values();
+    }
 }

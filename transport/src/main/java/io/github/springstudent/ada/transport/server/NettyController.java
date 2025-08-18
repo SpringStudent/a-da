@@ -1,8 +1,10 @@
 package io.github.springstudent.ada.transport.server;
 
+import io.github.springstudent.ada.protocol.cmd.CmdEurekaServiceChange;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,5 +24,14 @@ public class NettyController {
     @GetMapping("/server")
     public String server() {
         return serverIp + ":" + serverPort;
+    }
+
+    @GetMapping("/eurekaServiceChange")
+    public void eurekaServiceChange(@RequestParam String serviceName, @RequestParam Integer eventType) {
+        NettyChannelManager.getAllChannels().forEach(channel -> {
+            if (channel.isActive()) {
+                channel.writeAndFlush(new CmdEurekaServiceChange(serviceName, eventType));
+            }
+        });
     }
 }

@@ -24,4 +24,5 @@ public enum CmdType {
     ClipboardTransfer,
     ReqCliInfo,
     ChangePwd,
+    EurekaServiceChange,
 }
