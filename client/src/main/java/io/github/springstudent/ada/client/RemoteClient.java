@@ -24,6 +24,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import javax.swing.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
@@ -54,7 +55,6 @@ public class RemoteClient extends RemoteFrame {
     private RemoteController controller;
 
     private char osId;
-
 
     public RemoteClient(String serverIp, Integer serverPort, String clipboardServer, String streamServer) {
         osId = System.getProperty("os.name").toLowerCase().charAt(0);
@@ -128,9 +128,9 @@ public class RemoteClient extends RemoteFrame {
 
     @Override
     public void openRemoteScreen(String deviceCode, String password) {
-        if(EmptyUtils.isNotEmpty(this.streamServer)){
+        if (EmptyUtils.isNotEmpty(this.streamServer)) {
             controller.openSession(deviceCode, password);
-        }else{
+        } else {
             showMessageDialog("暂无可用stream服务，无法发起远程桌面", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -204,17 +204,23 @@ public class RemoteClient extends RemoteFrame {
         } else if (cmd.getType().equals(CmdType.EurekaServiceChange)) {
             CmdEurekaServiceChange serviceChange = (CmdEurekaServiceChange) cmd;
             if (serviceChange.getServiceName().equals(Constants.SERVICE_STREAM)) {
-                try {
-                    this.streamServer = RemoteUtils.selectStream(this.registryServer);
-                } catch (Exception e) {
-                    this.streamServer = null;
-                }
+                CompletableFuture.supplyAsync(() -> RemoteUtils.selectStream(this.registryServer)).whenComplete((sServer, e) -> {
+                    if (e != null) {
+                        Log.error("handleCmd selectStream error", e);
+                        this.setStreamServer(null);
+                    } else {
+                        this.setStreamServer(sServer);
+                    }
+                });
             } else if (serviceChange.getServiceName().equals(Constants.SERVICE_TRANSPORT)) {
-                try {
-                    this.clipboardServer = RemoteUtils.selectClipboard(this.registryServer);
-                } catch (Exception e) {
-                    this.clipboardServer = null;
-                }
+                CompletableFuture.supplyAsync(() -> RemoteUtils.selectClipboard(this.registryServer)).whenComplete((cServer, e) -> {
+                    if (e != null) {
+                        Log.error("handleCmd selectClipboard error", e);
+                        this.setClipboardServer(null);
+                    } else {
+                        this.setClipboardServer(cServer);
+                    }
+                });
             }
         } else {
             controller.handleCmd(cmd);
@@ -239,12 +245,20 @@ public class RemoteClient extends RemoteFrame {
         connectServer();
     }
 
-    public String getClipboardServer() {
+    public synchronized String getClipboardServer() {
         return clipboardServer;
     }
 
-    public String getStreamServer() {
+    public synchronized void setClipboardServer(String clipboardServer) {
+        this.clipboardServer = clipboardServer;
+    }
+
+    public synchronized String getStreamServer() {
         return streamServer;
+    }
+
+    public synchronized void setStreamServer(String streamServer) {
+        this.streamServer = streamServer;
     }
 
 
