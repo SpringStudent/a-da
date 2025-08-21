@@ -212,7 +212,7 @@ public class RemoteClient extends RemoteFrame {
                         this.setStreamServer(sServer);
                     }
                 });
-            } else if (serviceChange.getServiceName().equals(Constants.SERVICE_TRANSPORT)) {
+            } else if (serviceChange.getServiceName().equals(Constants.SERVICE_CLIPBOARD)) {
                 CompletableFuture.supplyAsync(() -> RemoteUtils.selectClipboard(this.registryServer)).whenComplete((cServer, e) -> {
                     if (e != null) {
                         Log.error("handleCmd selectClipboard error", e);

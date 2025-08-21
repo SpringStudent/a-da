@@ -28,10 +28,10 @@ public class ExportController {
         }
     }
 
-    @GetMapping("/transportInstance")
+    @GetMapping("/clipboardInstance")
     public String transportInstance() {
         try {
-            return exportService.getServiceInstance(Constants.SERVICE_TRANSPORT);
+            return exportService.getServiceInstance(Constants.SERVICE_CLIPBOARD);
         }catch (Exception e){
             return Constants.buildResponseBody(e.getMessage(), "", 500);
         }

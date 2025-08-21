@@ -57,9 +57,8 @@ public class RemoteUtils {
     private static final String GET_CLIPBOARD = "/clipboard/get";
 
     private static final String SERVICE_STREAM = "/registry/streamInstance";
-    private static final String SERVICE_TRANSPORT = "/registry/transportInstance";
+    private static final String SERVICE_CLIPBOARD = "/registry/clipboardInstance";
     private static final String SERVICE_NETTY = "/registry/nettyInstance";
-
 
 
     /**
@@ -247,7 +246,7 @@ public class RemoteUtils {
     }
 
     public static String selectClipboard(String registryServer) {
-        JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_TRANSPORT).timeout(10000).execute().body());
+        JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_CLIPBOARD).timeout(10000).execute().body());
         return result.getStr("result") + "/" + Constants.SERVICE_CLIPBOARD;
     }
 
