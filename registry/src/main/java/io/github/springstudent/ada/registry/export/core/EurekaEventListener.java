@@ -77,8 +77,8 @@ public class EurekaEventListener {
     }
 
     private void eurekaServiceChange(String appName, Integer eventType) {
-        executor.submit(()->{
-            List<InstanceInfo> instances = eurekaClient.getInstancesByVipAddress(Constants.SERVICE_TRANSPORT, true);
+        executor.submit(() -> {
+            List<InstanceInfo> instances = serviceCache.get(Constants.SERVICE_TRANSPORT);
             if (EmptyUtils.isNotEmpty(instances)) {
                 String service = instances.get(0).getHomePageUrl().toString();
                 if (EmptyUtils.isNotEmpty(service)) {
