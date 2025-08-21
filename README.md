@@ -8,6 +8,7 @@ Currently, it supports the Windows/MacOs operating system. If you need support f
 #### Module Description
 
 * transport: Transmission module, responsible for remote desktop instructions and clipboard transmission
+* clipboard: Clipboard module, responsible for clipboard transmission
 * stream: Streaming media module, responsible for remote desktop screen transmission
 * registry: Registry center module, acting as a service registry center
 * protocol: Protocol module, responsible for protocol definition

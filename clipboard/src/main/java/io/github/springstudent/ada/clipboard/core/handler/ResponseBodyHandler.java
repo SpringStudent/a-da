@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author ZhouNing
  * @date 2024/12/31 13:19
  **/
-@ControllerAdvice(basePackages = "io.github.springstudent.ada.transport")
+@ControllerAdvice(basePackages = "io.github.springstudent.ada.clipboard")
 public class ResponseBodyHandler implements ResponseBodyAdvice<Object> {
 
 	@Override
