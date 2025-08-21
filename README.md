@@ -83,5 +83,3 @@ Given Netty's concurrency capabilities, it is perfectly feasible to support thou
 
 In the current architectural design, the primary bottleneck in concurrency lies with streaming media. Hence, distributing the streaming media service is essential. Naturally, since the clipboard involves the transfer of large files, distribution is also necessary for this component. Fortunately, 
 thanks to the stateless nature of both streaming media and file transfer, implementing distribution is relatively straightforward. This stands in contrast to the Netty service, which is stateful. Distributing the Netty service would require reliance on a central database such as Redis or MySQL, involving extensive modifications and complexities.
-
-2025-03-21 Reflection: If the Netty service in the transport layer needs to be distributed, May be use the MQTT protocol to refactor the transmission and replace Netty, with MySQL or Redis as the best choices for storing connection states.
