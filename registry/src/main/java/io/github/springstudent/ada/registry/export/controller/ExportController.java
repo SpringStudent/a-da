@@ -24,7 +24,7 @@ public class ExportController {
         try {
             return exportService.getServiceInstance(Constants.SERVICE_STREAM);
         }catch (Exception e){
-            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+            return Constants.buildResponseBody(e.getMessage(), "", 500);
         }
     }
 
@@ -33,7 +33,7 @@ public class ExportController {
         try {
             return exportService.getServiceInstance(Constants.SERVICE_TRANSPORT);
         }catch (Exception e){
-            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+            return Constants.buildResponseBody(e.getMessage(), "", 500);
         }
     }
 
@@ -42,7 +42,7 @@ public class ExportController {
         try {
             return exportService.getServiceNettyInstance();
         } catch (Exception e) {
-            return ExportService.buildResponseBody(e.getMessage(), "", 500);
+            return Constants.buildResponseBody(e.getMessage(), "", 500);
         }
     }
 }

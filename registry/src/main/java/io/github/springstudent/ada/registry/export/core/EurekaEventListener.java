@@ -2,7 +2,6 @@ package io.github.springstudent.ada.registry.export.core;
 
 import cn.hutool.http.HttpRequest;
 import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
 import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.common.utils.EmptyUtils;
 import org.springframework.cloud.netflix.eureka.server.event.EurekaInstanceCanceledEvent;
@@ -10,7 +9,6 @@ import org.springframework.cloud.netflix.eureka.server.event.EurekaInstanceRegis
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +19,6 @@ import java.util.concurrent.Executors;
 
 @Component
 public class EurekaEventListener {
-
-    @Resource
-    private EurekaClient eurekaClient;
 
     private final Map<String, Integer> instanceStatusMap = new ConcurrentHashMap<>();
 

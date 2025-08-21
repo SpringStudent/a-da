@@ -248,7 +248,7 @@ public class RemoteUtils {
 
     public static String selectClipboard(String registryServer) {
         JSONObject result = parseObj(HttpRequest.get(registryServer + SERVICE_TRANSPORT).timeout(10000).execute().body());
-        return result.getStr("result") + "/" + Constants.SERVICE_TRANSPORT;
+        return result.getStr("result") + "/" + Constants.SERVICE_CLIPBOARD;
     }
 
     public static String selectNettyServer(String registryServer) {

@@ -15,6 +15,7 @@
         <module>client</module>
         <module>common</module>
         <module>protocol</module>
+        <module>clipboard</module>
     </modules>
 
     <properties>
@@ -69,7 +70,7 @@
             <dependency>
                 <groupId>io.github.springstudent</groupId>
                 <artifactId>GyJdbc</artifactId>
-                <version>1.4.1.RELEASE</version>
+                <version>1.4.2.RELEASE</version>
             </dependency>
             <!--fast json-->
             <dependency>

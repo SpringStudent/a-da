@@ -1,5 +1,6 @@
 package io.github.springstudent.ada.transport.server;
 
+import io.github.springstudent.ada.common.Constants;
 import io.github.springstudent.ada.protocol.cmd.CmdEurekaServiceChange;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ public class NettyController {
 
     @GetMapping("/server")
     public String server() {
-        return serverIp + ":" + serverPort;
+        return Constants.buildResponseBody("success", serverIp + ":" + serverPort, 200);
     }
 
     @GetMapping("/eurekaServiceChange")
