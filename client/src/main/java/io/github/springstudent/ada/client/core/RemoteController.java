@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.github.springstudent.ada.common.utils.ImageUtilities.getOrCreateIcon;
@@ -125,16 +126,18 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
                 showMessageDialog("密码错误", JOptionPane.ERROR_MESSAGE);
             }
         } else if (cmd.getType().equals(CmdType.ResStream)) {
-            if (remoteSubscribe != null) {
-                remoteSubscribe.close();
-            }
-            try {
-                remoteSubscribe = new RemoteSubscribe(((CmdResStream) cmd).getPlayUrl());
-            } catch (Exception e) {
-                Log.error("remote subscribe error", e);
-                showMessageDialog("初始化远程画面失败", JOptionPane.ERROR_MESSAGE);
-                this.closeSession();
-            }
+            CompletableFuture.runAsync(() -> {
+                if (remoteSubscribe != null) {
+                    remoteSubscribe.close();
+                }
+                try {
+                    remoteSubscribe = new RemoteSubscribe(((CmdResStream) cmd).getPlayUrl());
+                } catch (Exception e) {
+                    Log.error("remote subscribe error", e);
+                    this.closeSession();
+                    showMessageDialog("初始化远程画面失败", JOptionPane.ERROR_MESSAGE);
+                }
+            });
         } else if (cmd.getType().equals(CmdType.ClipboardText) || cmd.getType().equals(CmdType.ClipboardTransfer)) {
             if (needSetClipboard(cmd)) {
                 super.setClipboard(cmd).whenComplete((o, o2) -> RemoteClient.getRemoteClient().getRemoteScreen().transferClipboarButton(true));
