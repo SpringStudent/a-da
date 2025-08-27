@@ -56,11 +56,11 @@ public class RemoteClient extends RemoteFrame {
 
     private char osId;
 
-    public RemoteClient(String serverIp, Integer serverPort, String clipboardServer, String streamServer) {
+    public RemoteClient(String nettyServerIp, Integer nettyServerPort, String clipboardServer, String streamServer) {
         osId = System.getProperty("os.name").toLowerCase().charAt(0);
         remoteClient = this;
-        this.serverIp = serverIp;
-        this.serverPort = serverPort;
+        this.serverIp = nettyServerIp;
+        this.serverPort = nettyServerPort;
         this.clipboardServer = clipboardServer;
         this.streamServer = streamServer;
         this.controlled = new RemoteControlled();
