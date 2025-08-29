@@ -72,8 +72,11 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         super.stop();
+        if (remoteSubscribe != null) {
+            remoteSubscribe.close();
+        }
     }
 
     @Override
@@ -127,9 +130,7 @@ public class RemoteController extends RemoteControll implements RemoteScreenList
             }
         } else if (cmd.getType().equals(CmdType.ResStream)) {
             CompletableFuture.runAsync(() -> {
-                if (remoteSubscribe != null) {
-                    remoteSubscribe.close();
-                }
+                stop();
                 try {
                     remoteSubscribe = new RemoteSubscribe(((CmdResStream) cmd).getPlayUrl());
                 } catch (Exception e) {
