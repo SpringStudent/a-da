@@ -61,7 +61,7 @@ public class RemoteScreen extends JFrame {
 
     private int screenNum = 1;
 
-    private char os;
+    private char remoteOs;
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
@@ -342,7 +342,7 @@ public class RemoteScreen extends JFrame {
 
     public void launch(int screenNum, char remoteOs) {
         this.screenNum = screenNum;
-        this.os = remoteOs;
+        this.remoteOs = remoteOs;
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
@@ -388,7 +388,7 @@ public class RemoteScreen extends JFrame {
 
     private int scaleYPosition(int y) {
         int canvasHeight = jfxPanel.getHeight();
-        if (os == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
+        if (remoteOs == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
             return (int) Math.round(y * (captureHeight / (double) canvasHeight)) / 2;
         } else {
             return (int) Math.round(y * (captureHeight / (double) canvasHeight));
@@ -397,7 +397,7 @@ public class RemoteScreen extends JFrame {
 
     private int scaleXPosition(int x) {
         int canvasWidth = jfxPanel.getWidth();
-        if (os == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
+        if (remoteOs == 'm' && RemoteClient.getRemoteClient().getOsId() != 'm') {
             return (int) Math.round(x * (captureWidth / (double) canvasWidth)) / 2;
         } else {
             return (int) Math.round(x * (captureWidth / (double) canvasWidth));
