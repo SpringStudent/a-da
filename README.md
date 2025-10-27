@@ -2,14 +2,14 @@
 
 #### a-da (ā dà) is translated as "阿大", named after a term my son likes. It is an open-source remote desktop control system.
 
-A distributed remote desktop control system with streaming media support,Based on JavaCV + Netty + Swing technology, the system achieves low-latency and stable frame rates through streaming media transmission. Local tests show a latency of less than 200ms. 
+A distributed remote desktop control system with streaming media support,Based on JavaCV + Netty + Swing technology, the system achieves low-latency and stable frame rates through streaming media transmission.
 Currently, it supports the Windows/MacOs operating system. If you need support for other operating systems, please refer to my other open-source project:https://github.com/SpringStudent/remote-desktop-control
 
 #### Module Description
 
 * transport: Transmission module, responsible for remote desktop instructions and clipboard transmission
-* clipboard: Clipboard module, responsible for clipboard transmission
-* stream: Streaming media module, responsible for remote desktop screen transmission
+* clipboard: Clipboard module, responsible for clipboard transmission(stateless,distributed)
+* stream: Streaming media module, responsible for remote desktop screen transmission(stateless,distributed)
 * registry: Registry center module, acting as a service registry center
 * protocol: Protocol module, responsible for protocol definition
 * common: Common module, responsible for the definition of common utility classes

@@ -2,14 +2,14 @@
 
 #### a-da(ā dà)中译为"阿大",以我儿子喜欢的词命名的一个开源的远程桌面控制系统
 
-支持流媒体分布式的远程桌面控制系统，基于javacv+netty+swing技术，通过流媒体传输画面从而保证低延迟和稳定的帧率，本地测试延迟低于200ms，支持windows/macos操作系统，
+支持流媒体分布式的远程桌面控制系统，基于javacv+netty+swing技术，通过流媒体传输画面从而保证低延迟和稳定的帧率，支持windows/macos操作系统，
 如果有其他操作系统使用需求可移步我另一个开源项目：https://github.com/SpringStudent/remote-desktop-control
 
 #### 模块说明
 
 * transport: 传输模块，负责远程桌面协议传输
-* clipboard: 剪贴板模块，负责剪贴板传输
-* stream: 流媒体模块，负责远程桌面画面传输
+* clipboard: 剪贴板模块，负责剪贴板传输（无状态，支持分布式）
+* stream: 流媒体模块，负责远程桌面画面传输（无状态，支持分布式）
 * registry: 注册中心模块，作为服务注册中心
 * protocol: 协议模块，负责协议的定义
 * common: 公共模块，负责公共工具类的定义
