@@ -33,26 +33,26 @@ import static java.lang.System.getProperty;
  **/
 public abstract class RemoteControll implements ClipboardOwner {
 
+    private static String rootDir;
+
+    private static String uploadDir;
+
+    private static String downloadDir;
+
     private Channel channel;
 
-    private String rootDir;
-
-    private String uploadDir;
-
-    private String downloadDir;
-
-    public RemoteControll() {
-        this.rootDir = getProperty("java.io.tmpdir") + File.separator + "ada";
+    static {
+        rootDir = getProperty("java.io.tmpdir") + File.separator + "remoteDeskopControll";
         if (FileUtil.exist(rootDir)) {
             FileUtil.clean(rootDir);
         } else {
             FileUtil.mkdir(rootDir);
         }
-        this.uploadDir = rootDir + File.separator + "upload";
+        uploadDir = rootDir + File.separator + "upload";
         if (!FileUtil.exist(uploadDir)) {
             FileUtil.mkdir(uploadDir);
         }
-        this.downloadDir = rootDir + File.separator + "download";
+        downloadDir = rootDir + File.separator + "download";
         if (!FileUtil.exist(downloadDir)) {
             FileUtil.mkdir(downloadDir);
         }
