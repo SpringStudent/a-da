@@ -117,7 +117,7 @@ public abstract class RemoteControll implements ClipboardOwner {
                 if (image != null) {
                     File outputFile = null;
                     try {
-                        outputFile = new File(this.rootDir + File.separator + IdUtil.fastSimpleUUID() + ".png");
+                        outputFile = new File(rootDir + File.separator + IdUtil.fastSimpleUUID() + ".png");
                         ImageIO.write(clipboardImage, "png", outputFile);
                         doSendClipboard(Arrays.asList(outputFile));
                         return CmdResRemoteClipboard.OK;
