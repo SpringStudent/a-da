@@ -286,7 +286,7 @@ public class RemoteClient extends RemoteFrame {
         //不需要注册中心的单机部署
 //        new RemoteClient("192.168.0.110", 11112, "http://192.168.0.110:11114/clipboard", "http://192.168.0.110:11110/stream");
         //注册中心部署
-        new RemoteClient("http://192.168.0.110:11113");
+        new RemoteClient("http://192.168.0.109:11113");
     }
 
 }
